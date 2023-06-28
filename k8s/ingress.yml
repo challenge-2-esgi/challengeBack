@@ -1,10 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jobify-gateway
+  name: app-gateway
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: #{CLUSTER_ISSUER}#
+    cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
     - hosts:

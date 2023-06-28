@@ -6,21 +6,29 @@ on:
       - "main"
       - "feat/CI-CD"
     paths:
-      - "k8s/ingress.yml"
       - ".github/workflows/ingress.yml"
+      - "k8s/ingress.yml"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.AKS_CLUSTER }}
       - name: Replace Tokens
         uses: cschleiden/replace-tokens@v1
         with:
           files: k8s/ingress.yml
         env:
-          CLUSTER_ISSUER: ${{ secrets.K8S_INGRESS_CLUSTER_ISSUER }}
           SECRET_NAME: ${{ secrets.K8S_INGRESS_SECRET_NAME }}
           HOST: ${{ secrets.K8S_INGRESS_HOST }}
-      - name: Show file
-        run: cat ./k8s/ingress.yml
+      - name: Deploy Manifests
+        uses: Azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/ingress.yml
