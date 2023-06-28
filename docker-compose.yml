@@ -1,30 +1,72 @@
 version: '3.8'
 
-services:  
-  back:
-    image: node:18.15.0-alpine3.17
-    container_name: challenge2-back
+services:
+  api-gateway:
+    depends_on:
+      - auth-service
+      - candidate-service
+      - recruiter-service
+    image: caddy:2.7-alpine
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - $BACK_PORT:80
+    volumes:
+      - ./docker/api-gateway/Caddyfile:/etc/caddy/Caddyfile
+
+  auth-service:
+    depends_on:
+      - db
+    image: node:18.16.1-alpine3.17
+    container_name: auth-service
     working_dir: /home/node/app
     tty: true
     stdin_open: true
-    env_file: .env
-    ports:
-      - $BACK_PORT:3000
+    env_file: ./services/auth-api/.env
     volumes:
-      - ./:/home/node/app
+      - ./services/auth-api:/home/node/app
+
+  candidate-service:
+    depends_on:
+      - db
+    image: node:18.16.1-alpine3.17
+    container_name: candidate-service
+    working_dir: /home/node/app
+    tty: true
+    stdin_open: true
+    env_file: ./services/candidate-api/.env
+    volumes:
+      - ./services/candidate-api:/home/node/app
+
+  recruiter-service:
+    depends_on:
+      - db
+    image: node:18.16.1-alpine3.17
+    container_name: recruiter-service
+    working_dir: /home/node/app
+    tty: true
+    stdin_open: true
+    env_file: ./services/recruiter-api/.env
+    volumes:
+      - ./services/recruiter-api:/home/node/app
 
   db:
-    image: postgres:15.2-alpine3.17
+    image: postgres:14.8-alpine3.17
     container_name: challenge2_db
     env_file: .env
     environment:
-      POSTGRES_DB: $DB_NAME
       POSTGRES_USER: $DB_USER
       POSTGRES_PASSWORD: $DB_PASSWORD
-    ports:
-      - $DB_PORT:5432
+      POSTGRES_MULTIPLE_DATABASES: $POSTGRES_MULTIPLE_DATABASES
     volumes:
+      - ./docker/db:/docker-entrypoint-initdb.d
       - data_db:/var/lib/postgresql/data
+  adminer:
+    depends_on:
+      - db
+    image: adminer:4.8.1
+    ports:
+      - 8080:8080
 
 volumes:
   data_db:
