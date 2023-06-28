@@ -1,0 +1,26 @@
+name: CI/CD K8s ingress
+
+on:
+  push:
+    branches:
+      - "main"
+      - "feat/CI-CD"
+    paths:
+      - "k8s/ingress.yml"
+      - ".github/workflows/ingress.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Replace Tokens
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: k8s/ingress.yml
+        env:
+          CLUSTER_ISSUER: ${{ secrets.K8S_INGRESS_CLUSTER_ISSUER }}
+          SECRET_NAME: ${{ secrets.K8S_INGRESS_SECRET_NAME }}
+          HOST: ${{ secrets.K8S_INGRESS_HOST }}
+      - name: Show file
+        run: cat ./k8s/ingress.yml
