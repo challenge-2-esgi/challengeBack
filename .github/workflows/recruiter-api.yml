@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - "main"
+      - "feat/CI-CD"
     paths:
       - "services/recruiter-api/**"
       - ".github/workflows/recruiter-api.yml"
+      - "k8s/recruiter-api.yml"
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -42,3 +44,32 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: ${{ secrets.ACR_ENDPOINT }}/recruiter-api:latest
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish-image
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.AKS_CLUSTER }}
+      - name: Replace Tokens
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: k8s/recruiter-api.yml
+        env:
+          ACR: ${{ secrets.ACR_ENDPOINT }}
+      - name: Deploy Manifests
+        uses: Azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/recruiter-api.yml
+      - name: Rollout deployement
+        run: kubectl rollout restart deployment recruiter-api-deployment
