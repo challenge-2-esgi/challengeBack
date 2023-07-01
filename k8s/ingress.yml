@@ -21,3 +21,17 @@ spec:
             name: auth-api
             port:
               number: 3000
+      - path: /companies
+        pathType: Prefix
+        backend:
+          service:
+            name: recruiter-api
+            port:
+              number: 3000
+      - path: /companies/*
+        pathType: Prefix
+        backend:
+          service:
+            name: recruiter-api
+            port:
+              number: 3000
