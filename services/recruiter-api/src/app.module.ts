@@ -8,8 +8,9 @@ import validationSchema from './config/validation';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      validationSchema: validationSchema,
       isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'prod',
+      validationSchema: validationSchema,
     }),
     CompanyModule,
   ],
