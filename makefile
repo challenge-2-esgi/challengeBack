@@ -32,3 +32,18 @@ recruiter-dev:
 # make command on each Caddyfile change
 caddy-reload:
 	docker compose exec api-gateway caddy reload --config /etc/caddy/Caddyfile
+
+# prisma
+# pass docker compose service name as argument to the command
+prisma-client:
+	docker compose exec $(filter-out $@,$(MAKECMDGOALS)) npx prisma generate
+prisma-db:
+	docker compose exec $(filter-out $@,$(MAKECMDGOALS)) npx prisma db push
+migrate:
+	docker compose exec $(filter-out $@,$(MAKECMDGOALS)) npx prisma migrate dev
+seed:
+	docker compose exec $(filter-out $@,$(MAKECMDGOALS)) npx prisma db seed
+
+# e2e tests
+test:
+	docker compose exec $(filter-out $@,$(MAKECMDGOALS)) npm run test:e2e
