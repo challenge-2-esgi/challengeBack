@@ -9,3 +9,30 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Company {
+  id          String  @id @default(uuid())
+  name        String
+  siren       String  @unique
+  website     String
+  logo        String?
+  size        Int
+  sector      String
+  description String
+  motivation  String
+  images      Json[]
+  address     Address @relation(fields: [addressId], references: [id])
+  addressId   String
+  ownerId     String
+}
+
+model Address {
+  id           String    @id @default(uuid())
+  streetNumber String
+  street       String
+  postcode     String
+  city         String
+  state        String
+  country      String
+  companies    Company[]
+}
