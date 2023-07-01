@@ -60,7 +60,9 @@ describe('CompaniesController (e2e)', () => {
       .patch(`/companies/${id}`)
       .field('name', updateDto.name)
       .field('size', updateDto.size)
-      .field('streetNumber', updateDto.address.streetNumber);
+      .field('streetNumber', updateDto.address.streetNumber)
+      .field('removeLogo', false)
+      .field('removeImages', false);
   }
 
   beforeAll(async () => {
