@@ -19,14 +19,12 @@ import { PrismaService } from './prisma/prisma.service';
       isGlobal: true,
       clients: [
         {
-          imports: [ConfigModule],
           inject: [ConfigService],
           name: Services.AUTH_SERVICE,
           useFactory: (configService: ConfigService) =>
             authService(configService),
         },
         {
-          imports: [ConfigModule],
           inject: [ConfigService],
           name: Services.CANDIDATE_SERVICE,
           useFactory: (configService: ConfigService) =>
