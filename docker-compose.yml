@@ -22,7 +22,6 @@ services:
     working_dir: /home/node/app
     tty: true
     stdin_open: true
-    env_file: ./services/auth-api/.env
     volumes:
       - ./services/auth-api:/home/node/app
 
@@ -34,7 +33,6 @@ services:
     working_dir: /home/node/app
     tty: true
     stdin_open: true
-    env_file: ./services/candidate-api/.env
     volumes:
       - ./services/candidate-api:/home/node/app
 
@@ -46,7 +44,6 @@ services:
     working_dir: /home/node/app
     tty: true
     stdin_open: true
-    env_file: ./services/recruiter-api/.env
     volumes:
       - ./services/recruiter-api:/home/node/app
 
