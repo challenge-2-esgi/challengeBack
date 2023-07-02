@@ -11,9 +11,9 @@ datasource db {
 }
 
 model Company {
-  id          String  @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
-  siren       String  @unique
+  siren       String     @unique
   website     String
   logo        String?
   size        Int
@@ -21,9 +21,10 @@ model Company {
   description String
   motivation  String
   images      Json[]
-  address     Address @relation(fields: [addressId], references: [id])
+  address     Address    @relation(fields: [addressId], references: [id])
   addressId   String
   ownerId     String
+  jobOffers   JobOffer[]
 }
 
 model Address {
@@ -35,4 +36,36 @@ model Address {
   state        String
   country      String
   companies    Company[]
+}
+
+model JobOffer {
+  id           String       @id @default(uuid())
+  title        String
+  description  String
+  experience   Experience?
+  category     String
+  tasks        Json[]
+  skills       Json[]
+  contractType ContractType
+  remuneration Int?
+  remoteDays   Int?
+  startDate    DateTime
+  duration     String?
+  company      Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId    String
+}
+
+enum ContractType {
+  CDI
+  CDD
+  FREELANCE
+  ALTERNANCE
+  STAGE
+}
+
+enum Experience {
+  YOUNG_GRADUATE
+  THREE_TO_FIVE_YEARS
+  SIX_TO_TEN_YEARS
+  MORE_THAN_TEN_YEARS
 }
