@@ -7,12 +7,7 @@ const validationSchema = Joi.object({
   MICROSERVICE_PORT: Joi.number().required(),
   AUTH_SERVICE_HOST: Joi.string().required(),
   AUTH_SERVICE_PORT: Joi.number().required(),
-  CANDIDATE_SERVICE_HOST: Joi.string().required(),
-  CANDIDATE_SERVICE_PORT: Joi.number().required(),
   DATABASE_URL: Joi.string().required(),
-  AZURE_STORAGE_CONNECTION_STRING: Joi.string().required(),
-  AZURE_BLOB_PUBLIC_CONTAINER: Joi.string().required(),
-  AZURE_BLOB_PRIVATE_CONTAINER: Joi.string().required(),
 });
 
 export default validationSchema;
