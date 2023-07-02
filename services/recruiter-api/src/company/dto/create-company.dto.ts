@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsUUID, Min } from 'class-validator';
 
 export class CreateCompanyDto {
   @IsNotEmpty()
@@ -26,6 +26,7 @@ export class CreateCompanyDto {
   motivation: string;
 
   @IsNotEmpty()
+  @IsUUID()
   ownerId: string;
 
   // address

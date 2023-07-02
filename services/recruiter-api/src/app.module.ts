@@ -3,6 +3,7 @@ import { CompanyModule } from './company/company.module';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { AzureBlobService } from './azure-blob/azure-blob.service';
+import { JobOfferModule } from './job-offer/job-offer.module';
 import validationSchema from './config/validation';
 
 @Module({
@@ -13,6 +14,7 @@ import validationSchema from './config/validation';
       validationSchema: validationSchema,
     }),
     CompanyModule,
+    JobOfferModule,
   ],
   providers: [PrismaService, AzureBlobService],
 })
