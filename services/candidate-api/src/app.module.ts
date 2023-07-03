@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import validationSchema from './config/validation';
 import { ClientsModule } from '@nestjs/microservices';
 import { Services, authService } from './config/tcpOptions';
+import { ApplicationsModule } from './applications/applications.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { Services, authService } from './config/tcpOptions';
         },
       ],
     }),
+    ApplicationsModule,
+    BookmarksModule
   ],
   controllers: [AppController],
   providers: [AppService],
