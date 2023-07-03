@@ -4,6 +4,7 @@ import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './loginDto/loginDto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -57,5 +58,10 @@ export class AuthService {
     } catch (e) {
       return null;
     }
+  }
+
+  async register(dto: CreateUserDto) {
+    const user = await this.usersService.create(dto);
+    return { ...user, access_token: this.jwtService.sign({ sub: user.id }) };
   }
 }
