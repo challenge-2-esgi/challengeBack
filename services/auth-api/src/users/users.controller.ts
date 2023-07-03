@@ -13,9 +13,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 import { AuthGuard } from '@nestjs/passport';
+import { Role } from '@prisma/client';
+import RoleGuard from 'src/roles/RoleGuard';
+import { Roles } from 'src/roles/roles.decorator';
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
+@Roles(Role.ADMIN)
+@UseGuards(RoleGuard)
 @UseInterceptors(UsersInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
