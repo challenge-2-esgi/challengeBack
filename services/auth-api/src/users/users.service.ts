@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -42,6 +42,10 @@ export class UsersService {
 
   async create(data: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    if (data?.roles == 'ADMIN') {
+      throw new BadRequestException();
+    }
 
     const userData = {
       ...data,
