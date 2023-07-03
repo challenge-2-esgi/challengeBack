@@ -6,6 +6,8 @@ const validationSchema = Joi.object({
   MICROSERVICE_HOST: Joi.string().required(),
   MICROSERVICE_PORT: Joi.number().required(),
   DATABASE_URL: Joi.string().required(),
+  SECRET_KEY: Joi.string().required(),
+  EXPIRES_IN: Joi.number().required(),
 });
 
 export default validationSchema;
