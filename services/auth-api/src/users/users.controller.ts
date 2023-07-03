@@ -7,14 +7,16 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 
 @Controller('users')
+@UseInterceptors(UsersInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
