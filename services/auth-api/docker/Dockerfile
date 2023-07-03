@@ -15,8 +15,14 @@ WORKDIR /app
 
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
-COPY --from=build /app/dist ./
+# copy only src as build folder contains prisma seed files
+COPY --from=build /app/dist/src ./dist 
+COPY --from=build /app/prisma ./prisma
 
 RUN npm install --omit=dev
 
-CMD [ "node", "main.js" ]
+RUN npx prisma generate
+
+ENV NODE_ENV=prod
+
+CMD [ "npm", "run", "start:migrate:prod" ]
