@@ -20,18 +20,14 @@ export class UsersService {
   async findAll(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take } = params;
+
     return this.prisma.user
       .findMany({
-        skip,
-        take,
-        cursor,
-        where,
-        orderBy,
+        skip: skip ? parseInt(skip.toString()) : undefined,
+        take: take ? parseInt(take.toString()) : undefined,
       })
       .then((users) => users);
   }

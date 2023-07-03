@@ -5,7 +5,7 @@
 localhost:80, 127.0.0.1:80 {
 	# define all paths
 	# reverse_proxy path target (service-name:port)
-	reverse_proxy / auth-service:3000
+	reverse_proxy /users auth-service:3000
 	reverse_proxy /companies recruiter-service:3000
 	reverse_proxy /companies/* recruiter-service:3000
 	reverse_proxy /job-offers recruiter-service:3000
