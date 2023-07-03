@@ -5,26 +5,20 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Query,
+  UseGuards,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { UsersInterceptor } from 'src/interceptor/users.interceptor';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
+@UseGuards(AuthGuard('jwt'))
 @UseInterceptors(UsersInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
   findAll(
     @Query()
