@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
@@ -8,7 +8,7 @@ export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
   @Post()
-  async create(@Body() createBookmarkDto: CreateBookmarkDto) {
+  async create(@Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto) {
     return await this.bookmarksService.create(createBookmarkDto);
   }
 
@@ -23,7 +23,7 @@ export class BookmarksController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateBookmarkDto: UpdateBookmarkDto) {
+  async update(@Param('id') id: string, @Body(ValidationPipe) updateBookmarkDto: UpdateBookmarkDto) {
     return await this.bookmarksService.update(id, updateBookmarkDto);
   }
 

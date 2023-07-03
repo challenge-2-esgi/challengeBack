@@ -1,12 +1,14 @@
-import { IsDefined, IsNotEmpty } from "class-validator";
+import { IsDefined, IsNotEmpty, IsUUID } from "class-validator";
 
 export class CreateApplicationDto {
     @IsDefined()
     @IsNotEmpty()
+    @IsUUID()
     userId: string
 
     @IsDefined()
     @IsNotEmpty()
+    @IsUUID()
     offerId: string
 
     @IsDefined()

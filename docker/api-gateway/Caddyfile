@@ -10,4 +10,8 @@ localhost:80, 127.0.0.1:80 {
 	reverse_proxy /companies/* recruiter-service:3000
 	reverse_proxy /job-offers recruiter-service:3000
 	reverse_proxy /job-offers/* recruiter-service:3000
+	reverse_proxy /applications candidate-service:3000
+	reverse_proxy /applications/* candidate-service:3000
+	reverse_proxy /bookmarks candidate-service:3000
+	reverse_proxy /bookmarks/* candidate-service:3000
 }
