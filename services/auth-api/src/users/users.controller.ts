@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Query,
+  UnprocessableEntityException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,6 +19,8 @@ import { Role, User } from '@prisma/client';
 import RoleGuard from 'src/roles/RoleGuard';
 import { Roles } from 'src/roles/roles.decorator';
 import { LoggedInUser } from 'src/auth/decorator/user.decorator';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -53,6 +57,28 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(loggedInUser.id, updateUserDto);
+  }
+
+  @Patch('current/edit-password')
+  async editCurrentUserPassword(
+    @LoggedInUser() loggedInUser: User,
+    @Body() dto: UpdatePasswordDto,
+  ) {
+    let user = null;
+    try {
+      user = await this.usersService.changePassword(loggedInUser.id, dto);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException();
+      }
+
+      throw new UnprocessableEntityException();
+    }
+
+    return user;
   }
 
   @Patch(':id')

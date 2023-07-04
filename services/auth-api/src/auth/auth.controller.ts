@@ -5,7 +5,6 @@ import {
   Controller,
   Post,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UsersInterceptor } from 'src/interceptor/users.interceptor';
@@ -19,7 +18,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  async create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserDto) {
     let user = null;
     try {
       user = await this.authService.register(createUserDto);
