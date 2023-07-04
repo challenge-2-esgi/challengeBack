@@ -2,18 +2,24 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { PrismaClient } from '@prisma/client';
+import { AccessType, AzureBlobService } from 'src/azure-blob/azure-blob.service';
 
 @Injectable()
 export class ApplicationsService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient, private azureBlobService: AzureBlobService) {}
 
-  async create(createApplicationDto: CreateApplicationDto) {
+  async create(createApplicationDto: CreateApplicationDto, file: Express.Multer.File | null) {
+    let fileUrl = null;
+    if (file != null) {
+      fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
+    }
+    
     return await this.prisma.application.create({
       data: {
         userId: createApplicationDto.userId,
         offerId: createApplicationDto.offerId,
         motivation: createApplicationDto.motivation,
-        cv: createApplicationDto.cv
+        cv: fileUrl
       }
     });
   }
