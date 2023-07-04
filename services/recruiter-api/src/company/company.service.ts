@@ -93,6 +93,18 @@ export class CompanyService {
     return this.exclude(company, ['addressId']);
   }
 
+  async findByOwnerId(ownerId: string) {
+    const company = await this.prisma.company.findFirstOrThrow({
+      where: {
+        ownerId: ownerId,
+      },
+      include: {
+        address: true,
+      },
+    });
+    return this.exclude(company, ['addressId']);
+  }
+
   async update(
     id: string,
     dto: UpdateCompanyDto,
