@@ -78,6 +78,23 @@ export class CompanyController {
     return company;
   }
 
+  @Get('owned/:id')
+  async findOneByOwned(@Param('id') id: string) {
+    let company = null;
+    try {
+      company = await this.companiesService.findByOwnerId(id);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException();
+      }
+      throw new BadRequestException();
+    }
+    return company;
+  }
+
   @Patch(':id')
   @UseInterceptors(
     FileFieldsInterceptor([
