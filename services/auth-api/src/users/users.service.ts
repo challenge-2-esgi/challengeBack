@@ -9,15 +9,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  private exclude<User, Key extends keyof User>(
-    user: User,
-    keys: Key[],
-  ): Omit<User, Key> {
-    return Object.fromEntries(
-      Object.entries(user).filter(([key]) => !keys.includes(key as Key)),
-    ) as Omit<User, Key>;
-  }
-
   async findOne(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
@@ -49,7 +40,7 @@ export class UsersService {
     });
   }
 
-  async create(data: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async create(data: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     if (data?.roles == 'ADMIN') {
@@ -61,24 +52,18 @@ export class UsersService {
       password: hashedPassword,
     };
 
-    const user = await this.prisma.user.create({
+    return this.prisma.user.create({
       data: userData,
     });
-
-    return this.exclude(user, ['password']);
   }
 
-  async update(
-    id: string,
-    data: UpdateUserDto,
-  ): Promise<Omit<User, 'password'>> {
-    const user = await this.prisma.user.update({
+  async update(id: string, data: UpdateUserDto): Promise<User> {
+    return this.prisma.user.update({
       where: {
         id: id,
       },
       data,
     });
-    return this.exclude(user, ['password']);
   }
 
   async delete(id: string): Promise<User> {

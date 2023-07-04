@@ -13,18 +13,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 import { AuthGuard } from '@nestjs/passport';
-import { Role } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import RoleGuard from 'src/roles/RoleGuard';
 import { Roles } from 'src/roles/roles.decorator';
+import { LoggedInUser } from 'src/auth/decorator/user.decorator';
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
-@Roles(Role.ADMIN)
 @UseGuards(RoleGuard)
 @UseInterceptors(UsersInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get()
+  @Roles(Role.ADMIN)
   findAll(
     @Query()
     params: {
@@ -35,12 +36,27 @@ export class UsersController {
     return this.usersService.findAll(params);
   }
 
+  @Get('current')
+  findCurrentUser(@LoggedInUser() loggedInUser: User) {
+    return loggedInUser;
+  }
+
   @Get(':id')
+  @Roles(Role.ADMIN)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
+  @Patch('current')
+  updateCurrentUser(
+    @LoggedInUser() loggedInUser: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(loggedInUser.id, updateUserDto);
+  }
+
   @Patch(':id')
+  @Roles(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
