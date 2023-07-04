@@ -14,8 +14,4 @@ export class CreateApplicationDto {
     @IsDefined()
     @IsNotEmpty()
     motivation: string
-
-    @IsDefined()
-    @IsNotEmpty()
-    cv: string
 }

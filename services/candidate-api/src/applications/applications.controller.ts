@@ -1,15 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe';
 
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Post()
-  async create(@Body(ValidationPipe) createApplicationDto: CreateApplicationDto) {
-    return await this.applicationsService.create(createApplicationDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @Body(ValidationPipe) createApplicationDto: CreateApplicationDto,
+    @UploadedFile(ApplicationsParseFileFieldsPipe) file?: Express.Multer.File | null
+  ) {
+    return await this.applicationsService.create(createApplicationDto, file);
   }
 
   @Get()
