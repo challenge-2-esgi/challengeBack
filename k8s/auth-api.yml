@@ -19,6 +19,36 @@ spec:
         image: "#{ACR}#/auth-api"
         ports:
         - containerPort: 3000
+        env:
+          - name: MICROSERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_HOST
+          
+          - name: MICROSERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_PORT
+          
+          - name: DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_DB_URL
+          
+          - name: SECRET_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: SECRET_KEY
+          
+          - name: EXPIRES_IN
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: EXPIRES_IN
 ---
 
 apiVersion: v1

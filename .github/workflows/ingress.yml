@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+      - "feat/k8s-config"
     paths:
       - ".github/workflows/ingress.yml"
       - "k8s/ingress.yml"
