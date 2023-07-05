@@ -74,6 +74,3 @@ jobs:
             k8s/auth-api.yml
           images: |
             ${{ secrets.ACR_ENDPOINT }}/auth-api:${{ github.sha }}
-
-      # - name: Rollout deployement
-      #   run: kubectl rollout restart deployment auth-api-deployment

@@ -63,7 +63,7 @@ jobs:
           context: "{{defaultContext}}:services/recruiter-api"
           file: ./docker/Dockerfile
           push: true
-          tags: ${{ secrets.ACR_ENDPOINT }}/recruiter-api:latest
+          tags: ${{ secrets.ACR_ENDPOINT }}/recruiter-api:${{ github.sha }}
   
   deploy:
     runs-on: ubuntu-latest
@@ -91,5 +91,5 @@ jobs:
         with:
           manifests: |
             k8s/recruiter-api.yml
-      - name: Rollout deployement
-        run: kubectl rollout restart deployment recruiter-api-deployment
+          images: |
+            ${{ secrets.ACR_ENDPOINT }}/recruiter-api:${{ github.sha }}
