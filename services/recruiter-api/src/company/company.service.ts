@@ -93,6 +93,18 @@ export class CompanyService {
     return this.exclude(company, ['addressId']);
   }
 
+  async findByOwnerId(ownerId: string) {
+    const company = await this.prisma.company.findFirstOrThrow({
+      where: {
+        ownerId: ownerId,
+      },
+      include: {
+        address: true,
+      },
+    });
+    return this.exclude(company, ['addressId']);
+  }
+
   async update(
     id: string,
     dto: UpdateCompanyDto,
@@ -122,13 +134,9 @@ export class CompanyService {
           company.logo,
           AccessType.PUBLIC,
         ));
-      logoUrl = null;
-    } else if (logo !== null) {
-      company.logo !== null &&
-        (await this.azureBlobService.deleteFile(
-          company.logo,
-          AccessType.PUBLIC,
-        ));
+    }
+
+    if (logo !== null) {
       logoUrl = await this.azureBlobService.uploadFile(logo, AccessType.PUBLIC);
     }
 
@@ -140,13 +148,9 @@ export class CompanyService {
           company.images.map((image) => image.toString()),
           AccessType.PUBLIC,
         ));
-      imageUrls = [];
-    } else if (images !== null) {
-      company.images.length > 0 &&
-        (await this.azureBlobService.deleteFiles(
-          company.images.map((image) => image.toString()),
-          AccessType.PUBLIC,
-        ));
+    }
+
+    if (images !== null) {
       imageUrls = await this.azureBlobService.uploadFiles(
         images,
         AccessType.PUBLIC,
