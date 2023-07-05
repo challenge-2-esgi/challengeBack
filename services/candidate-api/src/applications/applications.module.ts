@@ -6,6 +6,6 @@ import { AzureBlobService } from 'src/azure-blob/azure-blob.service';
 
 @Module({
   controllers: [ApplicationsController],
-  providers: [ApplicationsService, PrismaClient, AzureBlobService]
+  providers: [ApplicationsService, PrismaClient, AzureBlobService],
 })
 export class ApplicationsModule {}

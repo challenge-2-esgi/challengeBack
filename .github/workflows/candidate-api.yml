@@ -10,21 +10,45 @@ on:
       - ".github/workflows/candidate-api.yml"
       - "k8s/candidate-api.yml"
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./services/candidate-api
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install Dependencies
-  #       run: npm install
-  #     - name: Run Tests
-  #       run: npm test
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.8-alpine3.17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/db_test
+      AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+      AZURE_BLOB_PRIVATE_CONTAINER: ${{ secrets.AZURE_BLOB_PRIVATE_CONTAINER }}
+      AZURE_BLOB_PUBLIC_CONTAINER: ${{ secrets.AZURE_BLOB_PUBLIC_CONTAINER}}
+      MICROSERVICE_HOST: ${{ secrets.CANDIDATE_SERVICE_HOST }}
+      MICROSERVICE_PORT: ${{ secrets.MICROSERVICE_PORT }}
+      AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
+      AUTH_SERVICE_PORT: ${{ secrets.MICROSERVICE_PORT }}
+    defaults:
+      run:
+        working-directory: ./services/candidate-api
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: npm install
+      - name: Migrate DB
+        run: npx prisma migrate deploy
+      - name: Run e2e tests
+        run: npm run test:e2e
 
   publish-image:
     runs-on: ubuntu-latest
-    # needs: test
+    needs: test
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx

@@ -11,8 +11,8 @@ export class BookmarksService {
     return await this.prisma.bookmark.create({
       data: {
         userId: createBookmarkDto.userId,
-        offerId: createBookmarkDto.offerId
-      }
+        offerId: createBookmarkDto.offerId,
+      },
     });
   }
 
@@ -23,24 +23,23 @@ export class BookmarksService {
   async findOne(id: string) {
     const bookmark = await this.prisma.bookmark.findUnique({
       where: {
-        id
-      }
+        id,
+      },
     });
     if (!bookmark) {
-      throw new NotFoundException('Bookmark not found')
+      throw new NotFoundException('Bookmark not found');
     }
     return bookmark;
   }
 
-
   async findByUserId(userId: string) {
     const bookmarks = await this.prisma.bookmark.findMany({
       where: {
-        userId
-      }
+        userId,
+      },
     });
     if (!bookmarks) {
-      throw new NotFoundException('Bookmarks not found given user')
+      throw new NotFoundException('Bookmarks not found given user');
     }
     return bookmarks;
   }
@@ -49,21 +48,21 @@ export class BookmarksService {
     const bookmark = await this.findOne(id);
     return await this.prisma.bookmark.update({
       where: {
-        id
+        id,
       },
       data: {
         offerId: updateBookmarkDto.offerId,
-        userId: updateBookmarkDto.userId
-      }
-    })
+        userId: updateBookmarkDto.userId,
+      },
+    });
   }
 
   async remove(id: string) {
     const bookmark = await this.findOne(id);
     return await this.prisma.bookmark.delete({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 }

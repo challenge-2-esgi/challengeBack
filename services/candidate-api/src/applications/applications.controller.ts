@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -13,7 +24,8 @@ export class ApplicationsController {
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body(ValidationPipe) createApplicationDto: CreateApplicationDto,
-    @UploadedFile(ApplicationsParseFileFieldsPipe) file?: Express.Multer.File | null
+    @UploadedFile(ApplicationsParseFileFieldsPipe)
+    file?: Express.Multer.File | null,
   ) {
     return await this.applicationsService.create(createApplicationDto, file);
   }
@@ -29,7 +41,10 @@ export class ApplicationsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body(ValidationPipe) updateApplicationDto: UpdateApplicationDto) {
+  async update(
+    @Param('id') id: string,
+    @Body(ValidationPipe) updateApplicationDto: UpdateApplicationDto,
+  ) {
     return await this.applicationsService.update(id, updateApplicationDto);
   }
 
