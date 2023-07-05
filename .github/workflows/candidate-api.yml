@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - "main"
-      - "feat/k8s-config"
+      - "dev"
     paths:
       - "services/candidate-api/**"
       - ".github/workflows/candidate-api.yml"
