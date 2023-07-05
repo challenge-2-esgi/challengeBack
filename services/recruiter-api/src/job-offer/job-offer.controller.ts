@@ -8,11 +8,13 @@ import {
   Delete,
   NotFoundException,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { JobOfferService } from './job-offer.service';
 import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ContractType, Experience } from '@prisma/client';
 
 @Controller('job-offers')
 export class JobOfferController {
@@ -24,8 +26,16 @@ export class JobOfferController {
   }
 
   @Get()
-  async findAll() {
-    return await this.jobOfferService.findAll();
+  async findAll(
+    @Query()
+    params: {
+      skip?: number;
+      take?: number;
+      contractType?: ContractType;
+      experience?: Experience;
+    },
+  ) {
+    return await this.jobOfferService.findAll(params);
   }
 
   @Get(':id')

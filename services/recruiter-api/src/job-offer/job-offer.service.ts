@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { skip } from 'rxjs';
+import { ContractType, Experience } from '@prisma/client';
 
 @Injectable()
 export class JobOfferService {
@@ -16,8 +18,22 @@ export class JobOfferService {
     });
   }
 
-  findAll() {
+  findAll(params: {
+    skip?: number;
+    take?: number;
+    contractType?: ContractType;
+    experience?: Experience;
+  }) {
+    const { skip, take, contractType, experience } = params;
+
+    console.log('take', params);
     return this.prisma.jobOffer.findMany({
+      skip: skip ? parseInt(skip.toString()) : undefined,
+      take: take ? parseInt(take.toString()) : undefined,
+      where: {
+        ...(contractType != null && { contractType: contractType }),
+        ...(experience != null && { experience: experience }),
+      },
       include: {
         company: {
           include: {
