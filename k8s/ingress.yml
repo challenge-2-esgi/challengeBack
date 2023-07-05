@@ -4,6 +4,7 @@ metadata:
   name: app-gateway
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/health-probe-status-codes: "200-399, 401, 403"
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
@@ -28,13 +29,13 @@ spec:
             name: auth-api
             port:
               number: 3000
-      # - path: /auth/*
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: auth-api
-      #       port:
-      #         number: 3000
+      - path: /auth/*
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-api
+            port:
+              number: 3000
       
       - path: /applications
         pathType: Prefix
