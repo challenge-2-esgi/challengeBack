@@ -18,7 +18,7 @@ export class ApplicationsService {
     createApplicationDto: CreateApplicationDto,
     file: Express.Multer.File | null,
   ) {
-    let fileUrl = null;
+    let fileUrl = '';
     if (file != null) {
       fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
     }
