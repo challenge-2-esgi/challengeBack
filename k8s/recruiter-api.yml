@@ -85,9 +85,12 @@ spec:
   selector:
     app: recruiter-api
   ports:
-    - protocol: TCP
+    - name: app-port
+      protocol: TCP
       port: 3000
       targetPort: 3000
-    - protocol: TCP
+
+    - name: ms-port 
+      protocol: TCP
       port: 4000
       targetPort: 4000

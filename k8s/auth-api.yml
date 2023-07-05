@@ -60,7 +60,12 @@ spec:
   selector:
     app: auth-api
   ports:
-    - protocol: TCP
+    - name: app-port
+      protocol: TCP
       port: 3000
-    - protocol: TCP
+      targetPort: 3000
+
+    - name: ms-port 
+      protocol: TCP
       port: 4000
+      targetPort: 4000
