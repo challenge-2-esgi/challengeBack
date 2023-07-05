@@ -19,27 +19,62 @@ spec:
         image:  "#{ACR}#/recruiter-api"
         ports:
         - containerPort: 3000
+        - containerPort: 4000
         env:
           - name: DATABASE_URL
             valueFrom:
               configMapKeyRef:
-                name: recruiter-config
-                key: DATABASE_URL
+                name: challenge-configmap
+                key: RECRUITER_DB_URL
+          
           - name: AZURE_STORAGE_CONNECTION_STRING
             valueFrom:
               configMapKeyRef:
-                name: recruiter-config
+                name: challenge-configmap
                 key: AZURE_STORAGE_CONNECTION_STRING
           - name: AZURE_BLOB_PRIVATE_CONTAINER
             valueFrom:
               configMapKeyRef:
-                name: recruiter-config
+                name: challenge-configmap
                 key: AZURE_BLOB_PRIVATE_CONTAINER
           - name: AZURE_BLOB_PUBLIC_CONTAINER
             valueFrom:
               configMapKeyRef:
-                name: recruiter-config
+                name: challenge-configmap
                 key: AZURE_BLOB_PUBLIC_CONTAINER
+          
+          - name: MICROSERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: RECRUITER_SERVICE_HOST
+          - name: MICROSERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: RECRUITER_SERVICE_PORT
+          
+          - name: AUTH_SERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_HOST
+          - name: AUTH_SERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_PORT
+
+          - name: CANDIDATE_SERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: CANDIDATE_SERVICE_HOST
+          - name: CANDIDATE_SERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: CANDIDATE_SERVICE_PORT
 ---
 
 apiVersion: v1
@@ -50,6 +85,12 @@ spec:
   selector:
     app: recruiter-api
   ports:
-    - protocol: TCP
+    - name: app-port
+      protocol: TCP
       port: 3000
       targetPort: 3000
+
+    - name: ms-port 
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

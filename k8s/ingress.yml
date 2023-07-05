@@ -4,6 +4,7 @@ metadata:
   name: app-gateway
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/health-probe-status-codes: "200-399, 401, 403"
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
@@ -14,13 +15,57 @@ spec:
   - host: #{HOST}#
     http:
       paths:
-      - path: /*
+      - path: /users
         pathType: Prefix
         backend:
           service:
             name: auth-api
             port:
               number: 3000
+      - path: /users/*
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-api
+            port:
+              number: 3000
+      - path: /auth/*
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-api
+            port:
+              number: 3000
+      
+      - path: /applications
+        pathType: Prefix
+        backend:
+          service:
+            name: candidate-api
+            port:
+              number: 3000
+      - path: /applications/*
+        pathType: Prefix
+        backend:
+          service:
+            name: candidate-api
+            port:
+              number: 3000
+      - path: /bookmarks
+        pathType: Prefix
+        backend:
+          service:
+            name: candidate-api
+            port:
+              number: 3000
+      - path: /bookmarks/*
+        pathType: Prefix
+        backend:
+          service:
+            name: candidate-api
+            port:
+              number: 3000
+      
       - path: /companies
         pathType: Prefix
         backend:
@@ -29,6 +74,20 @@ spec:
             port:
               number: 3000
       - path: /companies/*
+        pathType: Prefix
+        backend:
+          service:
+            name: recruiter-api
+            port:
+              number: 3000
+      - path: /job-offers
+        pathType: Prefix
+        backend:
+          service:
+            name: recruiter-api
+            port:
+              number: 3000
+      - path: /job-offers/*
         pathType: Prefix
         backend:
           service:

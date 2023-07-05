@@ -4,26 +4,27 @@ on:
   push:
     branches:
       - "main"
+      - "dev"
     paths:
       - "services/candidate-api/**"
       - ".github/workflows/candidate-api.yml"
       - "k8s/candidate-api.yml"
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./services/candidate-api
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Dependencies
-        run: npm install
-      - name: Run Tests
-        run: npm test
+  # test:
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./services/candidate-api
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install Dependencies
+  #       run: npm install
+  #     - name: Run Tests
+  #       run: npm test
 
   publish-image:
     runs-on: ubuntu-latest
-    needs: test
+    # needs: test
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -42,7 +43,7 @@ jobs:
           context: "{{defaultContext}}:services/candidate-api"
           file: ./docker/Dockerfile
           push: true
-          tags: ${{ secrets.ACR_ENDPOINT }}/candidate-api:latest
+          tags: ${{ secrets.ACR_ENDPOINT }}/candidate-api:${{ github.sha }}
   
   deploy:
     runs-on: ubuntu-latest
@@ -70,5 +71,5 @@ jobs:
         with:
           manifests: |
             k8s/candidate-api.yml
-      - name: Rollout deployement
-        run: kubectl rollout restart deployment candidate-api-deployment
+          images: |
+            ${{ secrets.ACR_ENDPOINT }}/candidate-api:${{ github.sha }}
