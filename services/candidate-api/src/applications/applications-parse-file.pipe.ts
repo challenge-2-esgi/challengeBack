@@ -16,7 +16,10 @@ export class ApplicationsParseFileFieldsPipe implements PipeTransform {
   private isValid(file: Express.Multer.File) {
     const fileTypeValidator = {
       isValid: (file: Express.Multer.File) => {
-        return file.mimetype.includes('image') || file.mimetype.includes('application/pdf');
+        return (
+          file.mimetype.includes('image') ||
+          file.mimetype.includes('application/pdf')
+        );
       },
     };
 
@@ -37,10 +40,7 @@ export class ApplicationsParseFileFieldsPipe implements PipeTransform {
     return true;
   }
 
-  transform(
-    value: Express.Multer.File,
-    metadata: ArgumentMetadata,
-  ) {
+  transform(value: Express.Multer.File, metadata: ArgumentMetadata) {
     let newValue: Value = null;
 
     const file = value;

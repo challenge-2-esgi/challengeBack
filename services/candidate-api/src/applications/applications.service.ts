@@ -2,25 +2,34 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { PrismaClient } from '@prisma/client';
-import { AccessType, AzureBlobService } from 'src/azure-blob/azure-blob.service';
+import {
+  AccessType,
+  AzureBlobService,
+} from 'src/azure-blob/azure-blob.service';
 
 @Injectable()
 export class ApplicationsService {
-  constructor(private prisma: PrismaClient, private azureBlobService: AzureBlobService) {}
+  constructor(
+    private prisma: PrismaClient,
+    private azureBlobService: AzureBlobService,
+  ) {}
 
-  async create(createApplicationDto: CreateApplicationDto, file: Express.Multer.File | null) {
+  async create(
+    createApplicationDto: CreateApplicationDto,
+    file: Express.Multer.File | null,
+  ) {
     let fileUrl = null;
     if (file != null) {
       fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
     }
-    
+
     return await this.prisma.application.create({
       data: {
         userId: createApplicationDto.userId,
         offerId: createApplicationDto.offerId,
         motivation: createApplicationDto.motivation,
-        cv: fileUrl
-      }
+        cv: fileUrl,
+      },
     });
   }
 
@@ -31,11 +40,11 @@ export class ApplicationsService {
   async findOne(id: string) {
     const application = await this.prisma.application.findUnique({
       where: {
-        id
-      }
+        id,
+      },
     });
     if (!application) {
-      throw new NotFoundException('Application not found')
+      throw new NotFoundException('Application not found');
     }
     return application;
   }
@@ -43,11 +52,11 @@ export class ApplicationsService {
   async findByUserId(userId: string) {
     const applications = await this.prisma.application.findMany({
       where: {
-        userId
-      }
+        userId,
+      },
     });
     if (!applications) {
-      throw new NotFoundException('Applications not found given user')
+      throw new NotFoundException('Applications not found given user');
     }
     return applications;
   }
@@ -56,20 +65,20 @@ export class ApplicationsService {
     const application = await this.findOne(id);
     return await this.prisma.application.update({
       where: {
-        id
+        id,
       },
       data: {
-        status: UpdateApplicationDto.status
-      }
-    })
+        status: UpdateApplicationDto.status,
+      },
+    });
   }
 
   async remove(id: string) {
     const application = await this.findOne(id);
     return await this.prisma.application.delete({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 }

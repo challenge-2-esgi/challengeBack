@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import validationSchema from './config/validation';
 import { ClientsModule } from '@nestjs/microservices';
-import { Services, authService } from './config/tcpOptions';
 import { ApplicationsModule } from './applications/applications.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { Services, authService } from './config/tcpOptions';
+import validationSchema from './config/validation';
 
 @Module({
   imports: [
@@ -27,9 +25,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
       ],
     }),
     ApplicationsModule,
-    BookmarksModule
+    BookmarksModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
