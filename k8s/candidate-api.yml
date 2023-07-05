@@ -51,7 +51,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: CANDIDATE_SERVICE_HOST
+                key: CANDIDATE_SERVICE_PORT
           
           - name: AUTH_SERVICE_HOST
             valueFrom:
