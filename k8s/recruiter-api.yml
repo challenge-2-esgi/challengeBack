@@ -19,6 +19,7 @@ spec:
         image:  "#{ACR}#/recruiter-api"
         ports:
         - containerPort: 3000
+        - containerPort: 4000
         env:
           - name: DATABASE_URL
             valueFrom:
@@ -87,3 +88,6 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+    - protocol: TCP
+      port: 4000
+      targetPort: 4000

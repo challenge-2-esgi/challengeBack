@@ -19,6 +19,7 @@ spec:
         image: "#{ACR}#/auth-api"
         ports:
         - containerPort: 3000
+        - containerPort: 4000
         env:
           - name: MICROSERVICE_HOST
             valueFrom:
@@ -61,3 +62,5 @@ spec:
   ports:
     - protocol: TCP
       port: 3000
+    - protocol: TCP
+      port: 4000
