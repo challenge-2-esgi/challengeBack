@@ -43,7 +43,7 @@ jobs:
           context: "{{defaultContext}}:services/auth-api"
           file: ./docker/Dockerfile
           push: true
-          tags: ${{ secrets.ACR_ENDPOINT }}/auth-api:latest
+          tags: ${{ secrets.ACR_ENDPOINT }}/auth-api:${{ github.sha }}
   
   deploy:
     runs-on: ubuntu-latest
@@ -72,5 +72,8 @@ jobs:
           namespace: default
           manifests: |
             k8s/auth-api.yml
-      - name: Rollout deployement
-        run: kubectl rollout restart deployment auth-api-deployment
+          images: |
+            ${{ secrets.ACR_ENDPOINT }}/auth-api:${{ github.sha }}
+
+      # - name: Rollout deployement
+      #   run: kubectl rollout restart deployment auth-api-deployment
