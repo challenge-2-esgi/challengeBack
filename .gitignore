@@ -38,3 +38,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 k8s/config/
+k8s/dev/
+scripts/
