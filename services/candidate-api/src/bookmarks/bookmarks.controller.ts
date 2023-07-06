@@ -7,12 +7,15 @@ import {
   Param,
   Post,
   UnprocessableEntityException,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import JwtAuthGuard from 'src/auth/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('bookmarks')
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
