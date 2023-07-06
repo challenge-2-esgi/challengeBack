@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   UnprocessableEntityException,
   ValidationPipe,
@@ -13,7 +12,6 @@ import {
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 
 @Controller('bookmarks')
 export class BookmarksController {
@@ -37,31 +35,13 @@ export class BookmarksController {
     return bookmark;
   }
 
-  @Get()
-  async findAll() {
-    return await this.bookmarksService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.bookmarksService.findOne(id);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body(ValidationPipe) updateBookmarkDto: UpdateBookmarkDto,
-  ) {
-    return await this.bookmarksService.update(id, updateBookmarkDto);
+  @Get('/user/:id')
+  async findByUserId(@Param('id') id: string) {
+    return await this.bookmarksService.findByUserId(id);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.bookmarksService.remove(id);
-  }
-
-  @Get('/user/:id')
-  async findByUserId(@Param('id') id: string) {
-    return await this.bookmarksService.findByUserId(id);
   }
 }
