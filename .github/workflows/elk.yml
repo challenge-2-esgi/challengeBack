@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - "main"
-      - "feat/k8s-elk"
+      - "dev"
     paths:
       - ".github/workflows/elk.yml"
       - "k8s/elk.yml"
