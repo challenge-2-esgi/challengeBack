@@ -5,16 +5,17 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   UnprocessableEntityException,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import JwtAuthGuard from 'src/auth/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('bookmarks')
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
@@ -37,31 +38,13 @@ export class BookmarksController {
     return bookmark;
   }
 
-  @Get()
-  async findAll() {
-    return await this.bookmarksService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.bookmarksService.findOne(id);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body(ValidationPipe) updateBookmarkDto: UpdateBookmarkDto,
-  ) {
-    return await this.bookmarksService.update(id, updateBookmarkDto);
+  @Get('/user/:id')
+  async findByUserId(@Param('id') id: string) {
+    return await this.bookmarksService.findByUserId(id);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.bookmarksService.remove(id);
-  }
-
-  @Get('/user/:id')
-  async findByUserId(@Param('id') id: string) {
-    return await this.bookmarksService.findByUserId(id);
   }
 }

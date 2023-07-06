@@ -9,6 +9,7 @@ import {
   Post,
   UnprocessableEntityException,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,7 +19,9 @@ import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe'
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import JwtAuthGuard from 'src/auth/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}

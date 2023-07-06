@@ -1,22 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  NotFoundException,
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { JobOfferService } from './job-offer.service';
+import { ContractType, Experience } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { ContractType, Experience } from '@prisma/client';
-import { query } from 'express';
+import { JobOfferService } from './job-offer.service';
+import JwtAuthGuard from 'src/auth/jwt-guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('job-offers')
 export class JobOfferController {
   constructor(private readonly jobOfferService: JobOfferService) {}

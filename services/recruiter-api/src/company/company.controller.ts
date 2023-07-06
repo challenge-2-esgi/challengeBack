@@ -9,15 +9,18 @@ import {
   Patch,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import JwtAuthGuard from 'src/auth/jwt-guard';
 import { CompanyParseFileFieldsPipe } from './company-parse-file-fields.pipe';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companiesService: CompanyService) {}
