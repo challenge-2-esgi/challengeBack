@@ -61,6 +61,11 @@ export class JobOfferController {
     return await this.jobOfferService.findAll(params);
   }
 
+  @Get('/company/:companyId')
+  async findAllByCompany(@Param('companyId') companyId: string) {
+    return await this.jobOfferService.findAllByCompany(companyId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     let jobOffer = null;
