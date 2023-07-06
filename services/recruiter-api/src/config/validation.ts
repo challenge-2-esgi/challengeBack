@@ -15,6 +15,9 @@ const validationSchema = Joi.object({
   AZURE_STORAGE_CONNECTION_STRING: Joi.string().required(),
   AZURE_BLOB_PUBLIC_CONTAINER: Joi.string().required(),
   AZURE_BLOB_PRIVATE_CONTAINER: Joi.string().required(),
+  ELASTICSEARCH_NODE: Joi.string().required(),
+  ELASTICSEARCH_USERNAME: Joi.string().required(),
+  ELASTICSEARCH_PASSWORD: Joi.string().required(),
 });
 
 export default validationSchema;
