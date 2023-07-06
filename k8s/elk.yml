@@ -1,11 +1,40 @@
-apiVersion: elasticsearch.k8s.elastic.co/v1
-kind: Elasticsearch
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk-deployment
+  labels:
+    app: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elk
+  template:
+    metadata:
+      labels:
+        app: elk
+    spec:
+      containers:
+      - name: elk
+        image:  "elasticsearch:8.8.1"
+        ports:
+        - containerPort: 9200
+        env:
+          - name: "node.name"
+            value: test
+          - name: "discovery.type"
+            value: test
+---
+
+apiVersion: v1
+kind: Service
 metadata:
   name: elk
 spec:
-  version: 8.8.2
-  nodeSets:
-  - name: default
-    count: 1
-    config:
-      node.store.allow_mmap: false
+  selector:
+    app: elk
+  ports:
+    - name: port
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
