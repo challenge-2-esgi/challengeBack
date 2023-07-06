@@ -20,11 +20,11 @@ import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
-@UseGuards(JwtAuthGuard)
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companiesService: CompanyService) {}
-
+  
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -98,6 +98,7 @@ export class CompanyController {
     return company;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -134,6 +135,7 @@ export class CompanyController {
     return updatedCompany;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

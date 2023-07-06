@@ -18,11 +18,11 @@ import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { JobOfferService } from './job-offer.service';
 import JwtAuthGuard from 'src/auth/jwt-guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('job-offers')
 export class JobOfferController {
   constructor(private readonly jobOfferService: JobOfferService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateJobOfferDto) {
     return await this.jobOfferService.create(dto);
@@ -31,7 +31,6 @@ export class JobOfferController {
   @Get('search')
   async search(@Query() query: { search?: string }) {
     const { search } = query;
-    console.log(search);
     let jobOffer = null;
     try {
       jobOffer = await this.jobOfferService.searchJobOffers(search);
@@ -80,6 +79,7 @@ export class JobOfferController {
     return jobOffer;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateJobOfferDto) {
     let jobOffer = null;
@@ -98,6 +98,7 @@ export class JobOfferController {
     return jobOffer;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
