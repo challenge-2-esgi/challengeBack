@@ -34,6 +34,8 @@ jobs:
       MICROSERVICE_PORT: ${{ secrets.MICROSERVICE_PORT }}
       AUTH_SERVICE_HOST: ${{ secrets.AUTH_SERVICE_HOST }}
       AUTH_SERVICE_PORT: ${{ secrets.MICROSERVICE_PORT }}
+      RECRUITER_SERVICE_HOST: ${{ secrets.RECRUITER_SERVICE_HOST }}
+      RECRUITER_SERVICE_PORT: ${{ secrets.MICROSERVICE_PORT }}
     defaults:
       run:
         working-directory: ./services/candidate-api
