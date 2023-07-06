@@ -47,6 +47,17 @@ services:
     volumes:
       - ./services/recruiter-api:/home/node/app
 
+  analytics-service:
+    depends_on:
+      - db
+    image: node:18.16.1-alpine3.17
+    container_name: analytics-service
+    working_dir: /home/node/app
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./services/analytics-api:/home/node/app
+
   db:
     image: postgres:14.8-alpine3.17
     container_name: challenge2_db

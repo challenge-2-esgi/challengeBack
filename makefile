@@ -28,6 +28,8 @@ candidate-dev:
 	docker compose exec candidate-service npm run start:dev
 recruiter-dev:
 	docker compose exec recruiter-service npm run start:dev
+analytics-dev:
+	docker compose exec analytics-service npm run start:dev
 
 # make command on each Caddyfile change
 caddy-reload:
