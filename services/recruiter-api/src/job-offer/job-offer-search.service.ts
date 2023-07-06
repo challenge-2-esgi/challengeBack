@@ -43,9 +43,19 @@ export class JobOfferSearchService {
       index: this.index,
       body: {
         query: {
-          multi_match: {
-            query: text,
-            fields: ['title', 'description'],
+          bool: {
+            should: [
+              {
+                wildcard: {
+                  title: `*${text}*`,
+                },
+              },
+              {
+                wildcard: {
+                  description: `*${text}*`,
+                },
+              },
+            ],
           },
         },
       },

@@ -29,13 +29,40 @@ export class JobOfferService {
     return jobOffer;
   }
 
-  findAll(params: {
+  async findAll(params: {
     skip?: number;
     take?: number;
     contractType?: ContractType;
     experience?: Experience;
+    search: string;
   }) {
-    const { skip, take, contractType, experience } = params;
+    const { skip, take, contractType, experience, search } = params;
+
+    if (search) {
+      const results = await this.jobOfferSearchService.search(search);
+      const ids = results.map((result: any) => result.id);
+      if (!ids.length) {
+        return [];
+      }
+      return this.prisma.jobOffer.findMany({
+        where: {
+          id: {
+            in: ids,
+          },
+          ...(contractType != null && { contractType: contractType }),
+          ...(experience != null && { experience: experience }),
+        },
+        skip: skip ? parseInt(skip.toString()) : undefined,
+        take: take ? parseInt(take.toString()) : undefined,
+        include: {
+          company: {
+            include: {
+              address: true,
+            },
+          },
+        },
+      });
+    }
 
     return this.prisma.jobOffer.findMany({
       skip: skip ? parseInt(skip.toString()) : undefined,

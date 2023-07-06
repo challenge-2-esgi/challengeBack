@@ -54,6 +54,7 @@ export class JobOfferController {
       take?: number;
       contractType?: ContractType;
       experience?: Experience;
+      search: string;
     },
   ) {
     return await this.jobOfferService.findAll(params);
