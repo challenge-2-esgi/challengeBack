@@ -75,6 +75,21 @@ spec:
               configMapKeyRef:
                 name: challenge-configmap
                 key: CANDIDATE_SERVICE_PORT
+          - name: ELASTICSEARCH_NODE
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: ELASTICSEARCH_NODE
+          - name: ELASTICSEARCH_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: ELASTICSEARCH_USERNAME
+          - name: ELASTICSEARCH_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: ELASTICSEARCH_PASSWORD
 ---
 
 apiVersion: v1
