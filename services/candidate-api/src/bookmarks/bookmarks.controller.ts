@@ -1,13 +1,16 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
   Post,
+  UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
@@ -18,7 +21,20 @@ export class BookmarksController {
 
   @Post()
   async create(@Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto) {
-    return await this.bookmarksService.create(createBookmarkDto);
+    let bookmark = null;
+    try {
+      bookmark = await this.bookmarksService.create(createBookmarkDto);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException();
+      }
+      throw new UnprocessableEntityException();
+    }
+
+    return bookmark;
   }
 
   @Get()

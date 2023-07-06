@@ -1,20 +1,23 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  ConflictException,
+  Controller,
   Delete,
-  ValidationPipe,
-  UseInterceptors,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UnprocessableEntityException,
   UploadedFile,
+  UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -23,11 +26,26 @@ export class ApplicationsController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(
-    @Body(ValidationPipe) createApplicationDto: CreateApplicationDto,
     @UploadedFile(ApplicationsParseFileFieldsPipe)
-    file?: Express.Multer.File | null,
+    file: Express.Multer.File | null,
+    @Body(ValidationPipe) createApplicationDto: CreateApplicationDto,
   ) {
-    return await this.applicationsService.create(createApplicationDto, file);
+    let application = null;
+    try {
+      application = await this.applicationsService.create(
+        createApplicationDto,
+        file,
+      );
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException();
+      }
+      throw new UnprocessableEntityException();
+    }
+    return application;
   }
 
   @Get()
