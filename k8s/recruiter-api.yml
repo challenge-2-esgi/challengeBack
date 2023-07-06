@@ -47,12 +47,12 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: RECRUITER_SERVICE_HOST
+                key: MICROSERVICE_HOST
           - name: MICROSERVICE_PORT
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: RECRUITER_SERVICE_PORT
+                key: MICROSERVICE_PORT
           
           - name: AUTH_SERVICE_HOST
             valueFrom:

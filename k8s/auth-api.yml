@@ -25,13 +25,13 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: AUTH_SERVICE_HOST
+                key: MICROSERVICE_HOST
           
           - name: MICROSERVICE_PORT
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: AUTH_SERVICE_PORT
+                key: MICROSERVICE_PORT
           
           - name: DATABASE_URL
             valueFrom:
