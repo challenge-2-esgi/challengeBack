@@ -1,4 +1,4 @@
-name: CI/CD K8s ingress
+name: CI/CD K8s Elasticsearch
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - "main"
       - "dev"
     paths:
-      - ".github/workflows/ingress.yml"
-      - "k8s/ingress.yml"
+      - ".github/workflows/elk.yml"
+      - "k8s/elk.yml"
 
 jobs:
   deploy:
@@ -20,15 +20,8 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AKS_CLUSTER }}
-      - name: Replace Tokens
-        uses: cschleiden/replace-tokens@v1
-        with:
-          files: k8s/ingress.yml
-        env:
-          SECRET_NAME: ${{ secrets.K8S_INGRESS_SECRET_NAME }}
-          HOST: ${{ secrets.K8S_INGRESS_HOST }}
       - name: Deploy Manifests
         uses: Azure/k8s-deploy@v4
         with:
           manifests: |
-            k8s/ingress.yml
+            k8s/elk.yml
