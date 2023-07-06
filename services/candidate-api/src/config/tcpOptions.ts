@@ -3,6 +3,7 @@ import { ClientProvider, TcpOptions, Transport } from '@nestjs/microservices';
 
 enum Services {
   AUTH_SERVICE = 'AUTH_SERVICE',
+  RECRUITER_SERVICE = 'RECRUITER_SERVICE',
 }
 
 export default (configService: ConfigService) =>
@@ -22,4 +23,12 @@ const authService = (configService: ConfigService): ClientProvider => ({
   },
 });
 
-export { Services, authService };
+const recruiterService = (configService: ConfigService): ClientProvider => ({
+  transport: Transport.TCP,
+  options: {
+    host: configService.get('RECRUITER_SERVICE_HOST'),
+    port: configService.get('RECRUITER_SERVICE_PORT'),
+  },
+});
+
+export { Services, authService, recruiterService };

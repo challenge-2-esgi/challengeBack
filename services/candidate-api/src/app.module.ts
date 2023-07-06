@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
 import { ApplicationsModule } from './applications/applications.module';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
-import { Services, authService } from './config/tcpOptions';
+import { Services, authService, recruiterService } from './config/tcpOptions';
 import validationSchema from './config/validation';
 
 @Module({
@@ -21,6 +21,12 @@ import validationSchema from './config/validation';
           name: Services.AUTH_SERVICE,
           useFactory: (configService: ConfigService) =>
             authService(configService),
+        },
+        {
+          inject: [ConfigService],
+          name: Services.RECRUITER_SERVICE,
+          useFactory: (configService: ConfigService) =>
+            recruiterService(configService),
         },
       ],
     }),
