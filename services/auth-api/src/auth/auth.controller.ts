@@ -6,6 +6,7 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -16,6 +17,12 @@ import { LoginDto } from './loginDto/loginDto';
 @UseInterceptors(UsersInterceptor)
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  // MS listeners
+  @MessagePattern('auth-validateJwt')
+  async validateJwt(@Payload() { token }: { token: string }) {
+    return await this.authService.validateToken(token);
+  }
 
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
