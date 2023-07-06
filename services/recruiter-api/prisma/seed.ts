@@ -1,6 +1,31 @@
-import { Address, Company, PrismaClient } from '@prisma/client';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { Address, Company, JobOffer, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const elasticsearchService = new ElasticsearchService({
+  node: process.env.ELASTICSEARCH_NODE,
+  auth: {
+    username: process.env.ELASTICSEARCH_USERNAME,
+    password: process.env.ELASTICSEARCH_PASSWORD,
+  },
+});
+
+interface JobOfferSearchBody {
+  id: string;
+  title: string;
+  description: string;
+}
+
+const indexPost = (jobOffer: JobOffer) => {
+  return elasticsearchService.index<JobOfferSearchBody>({
+    index: 'job-offer',
+    body: {
+      id: jobOffer.id,
+      title: jobOffer.title,
+      description: jobOffer.description,
+    },
+  });
+};
 
 async function resetDB() {
   await prisma.jobOffer.deleteMany();
@@ -78,61 +103,73 @@ async function insertJobOffers(companies: Company[]) {
     throw new Error('need at least two companies, check provided list');
   }
 
-  await prisma.jobOffer.createMany({
-    data: [
-      {
-        title: 'Développeur React',
-        description:
-          'Le développement Web est votre expertise. Vous êtes rattaché au Lead développeur.',
-        contractType: 'CDI',
-        experience: 'THREE_TO_FIVE_YEARS',
-        tasks: [
-          'Réaliser les travaux de conception et de développement',
-          'Elaboration des cahiers de recette et suivi des recettes.',
-        ],
-        skills: ['javascript', 'react native'],
-        remoteDays: 3,
-        remuneration: 60,
-        startDate: new Date('2023-09-01'),
-        category: 'Développement Informatique',
-        companyId: companies[0].id,
-      },
-      {
-        title: 'Développeur fullstack Python / Vue.js',
-        description:
-          'Centre de recherche dédié à la transition énergétique et écologique des villes qui regroupe des chercheurs travaillant à développer des solutions innovantes pour construire une ville efficiente énergétiquement et décarbonée.',
-        contractType: 'CDI',
-        experience: 'SIX_TO_TEN_YEARS',
-        tasks: [
-          'Documenter et réaliser les tests automatisés (unitaire et d intégration)',
-          'Participer à la maintenance en condition opérationnelle de nos logiciels ',
-          'Participer aux cérémonies agiles.',
-        ],
-        skills: ['Python', 'Vuejs', 'django', 'fastAPi'],
-        remoteDays: 1,
-        remuneration: 54,
-        startDate: new Date('2023-09-01'),
-        category: 'Développement Informatique',
-        companyId: companies[0].id,
-      },
-      {
-        title: 'Alternance - Ingénieur Mise en Réseau F/H',
-        description:
-          "Vous êtes motivé par la gestion d'activité dans un environnement technologique, avec une place prépondérante donnée à la technique des Réseaux ?",
-        contractType: 'ALTERNANCE',
-        tasks: [
-          " Piloter les interventions d'installation et migration Data (VPN MPLS et Accès Internet) et installation et portabilité Voix (PBX et Centrex)",
-          'Coordonner les équipes de techniciens installateurs intervenant sur les sites des clients.',
-          "Communiquer sur l'avancement de vos dossiers avec les chefs de projet déploiement.",
-        ],
-        skills: ['Python', 'Vuejs', 'django', 'fastAPi'],
-        startDate: new Date('2023-09-04'),
-        category: 'Infra, Réseaux, Télécoms',
-        duration: '12 mois',
-        companyId: companies[1].id,
-      },
-    ],
+  const createJob1 = await prisma.jobOffer.create({
+    data: {
+      title: 'Développeur React',
+      description:
+        'Le développement Web est votre expertise. Vous êtes rattaché au Lead développeur.',
+      contractType: 'CDI',
+      experience: 'THREE_TO_FIVE_YEARS',
+      tasks: [
+        'Réaliser les travaux de conception et de développement',
+        'Elaboration des cahiers de recette et suivi des recettes.',
+      ],
+      skills: ['javascript', 'react native'],
+      remoteDays: 3,
+      remuneration: 60,
+      startDate: new Date('2023-09-01'),
+      category: 'Développement Informatique',
+      companyId: companies[0].id,
+    },
   });
+
+  const createJob2 = await prisma.jobOffer.create({
+    data: {
+      title: 'Développeur fullstack Python / Vue.js',
+      description:
+        'Centre de recherche dédié à la transition énergétique et écologique des villes qui regroupe des chercheurs travaillant à développer des solutions innovantes pour construire une ville efficiente énergétiquement et décarbonée.',
+      contractType: 'CDI',
+      experience: 'SIX_TO_TEN_YEARS',
+      tasks: [
+        'Documenter et réaliser les tests automatisés (unitaire et d intégration)',
+        'Participer à la maintenance en condition opérationnelle de nos logiciels ',
+        'Participer aux cérémonies agiles.',
+      ],
+      skills: ['Python', 'Vuejs', 'django', 'fastAPi'],
+      remoteDays: 1,
+      remuneration: 54,
+      startDate: new Date('2023-09-01'),
+      category: 'Développement Informatique',
+      companyId: companies[0].id,
+    },
+  });
+
+  const createJob3 = await prisma.jobOffer.create({
+    data: {
+      title: 'Alternance - Ingénieur Mise en Réseau F/H',
+      description:
+        "Vous êtes motivé par la gestion d'activité dans un environnement technologique, avec une place prépondérante donnée à la technique des Réseaux ?",
+      contractType: 'ALTERNANCE',
+      tasks: [
+        " Piloter les interventions d'installation et migration Data (VPN MPLS et Accès Internet) et installation et portabilité Voix (PBX et Centrex)",
+        'Coordonner les équipes de techniciens installateurs intervenant sur les sites des clients.',
+        "Communiquer sur l'avancement de vos dossiers avec les chefs de projet déploiement.",
+      ],
+      skills: ['Python', 'Vuejs', 'django', 'fastAPi'],
+      startDate: new Date('2023-09-04'),
+      category: 'Infra, Réseaux, Télécoms',
+      duration: '12 mois',
+      companyId: companies[1].id,
+    },
+  });
+
+  indexPost(createJob1);
+  indexPost(createJob2);
+  indexPost(createJob3);
+
+  const jobsArray = [createJob1, createJob2, createJob3];
+
+  return jobsArray;
 }
 
 async function main() {
