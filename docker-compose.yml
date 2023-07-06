@@ -47,6 +47,18 @@ services:
     volumes:
       - ./services/recruiter-api:/home/node/app
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
   db:
     image: postgres:14.8-alpine3.17
     container_name: challenge2_db
@@ -67,6 +79,7 @@ services:
 
 volumes:
   data_db:
+  esdata:
 
 networks:
   challenge2:
