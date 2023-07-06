@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
       - name: elk
-        image:  "elasticsearch:8.8.1"
+        image: elasticsearch:7.14.0
         ports:
         - containerPort: 9200
         env:
           - name: "node.name"
-            value: test
+            value: elasticsearch
           - name: "discovery.type"
-            value: test
+            value: single-node
 ---
 
 apiVersion: v1
