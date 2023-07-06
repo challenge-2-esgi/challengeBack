@@ -21,11 +21,8 @@ export class JobOfferService {
       },
     });
 
-    console.log('jobOffer', jobOffer);
-
     const jobOfferSearch = await this.jobOfferSearchService.indexPost(jobOffer);
 
-    console.log('jobOfferSearch', jobOfferSearch);
     return jobOffer;
   }
 

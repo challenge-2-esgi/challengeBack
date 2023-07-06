@@ -31,7 +31,6 @@ export class JobOfferController {
   @Get('search')
   async search(@Query() query: { search?: string }) {
     const { search } = query;
-    console.log(search);
     let jobOffer = null;
     try {
       jobOffer = await this.jobOfferService.searchJobOffers(search);

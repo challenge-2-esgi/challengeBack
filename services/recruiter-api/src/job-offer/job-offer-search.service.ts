@@ -38,7 +38,6 @@ export class JobOfferSearchService {
   }
 
   async search(text: string) {
-    console.log('searching', text);
     const res = await this.elasticsearchService.search<JobOfferSearchResult>({
       index: this.index,
       body: {
