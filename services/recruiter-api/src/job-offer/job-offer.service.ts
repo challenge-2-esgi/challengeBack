@@ -4,18 +4,29 @@ import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { skip } from 'rxjs';
 import { ContractType, Experience } from '@prisma/client';
+import { JobOfferSearchService } from './job-offer-search.service';
 
 @Injectable()
 export class JobOfferService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jobOfferSearchService: JobOfferSearchService,
+  ) {}
 
-  create(dto: CreateJobOfferDto) {
-    return this.prisma.jobOffer.create({
+  async create(dto: CreateJobOfferDto) {
+    const jobOffer = await this.prisma.jobOffer.create({
       data: {
         ...dto,
         startDate: new Date(dto.startDate),
       },
     });
+
+    console.log('jobOffer', jobOffer);
+
+    const jobOfferSearch = await this.jobOfferSearchService.indexPost(jobOffer);
+
+    console.log('jobOfferSearch', jobOfferSearch);
+    return jobOffer;
   }
 
   findAll(params: {
@@ -26,7 +37,6 @@ export class JobOfferService {
   }) {
     const { skip, take, contractType, experience } = params;
 
-    console.log('take', params);
     return this.prisma.jobOffer.findMany({
       skip: skip ? parseInt(skip.toString()) : undefined,
       take: take ? parseInt(take.toString()) : undefined,
@@ -54,6 +64,21 @@ export class JobOfferService {
           include: {
             address: true,
           },
+        },
+      },
+    });
+  }
+
+  async searchJobOffers(search: string) {
+    const results = await this.jobOfferSearchService.search(search);
+    const ids = results.map((result: any) => result.id);
+    if (!ids.length) {
+      return [];
+    }
+    return this.prisma.jobOffer.findMany({
+      where: {
+        id: {
+          in: ids,
         },
       },
     });

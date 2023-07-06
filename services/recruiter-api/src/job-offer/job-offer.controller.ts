@@ -15,6 +15,7 @@ import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ContractType, Experience } from '@prisma/client';
+import { query } from 'express';
 
 @Controller('job-offers')
 export class JobOfferController {
@@ -23,6 +24,26 @@ export class JobOfferController {
   @Post()
   async create(@Body() dto: CreateJobOfferDto) {
     return await this.jobOfferService.create(dto);
+  }
+
+  @Get('search')
+  async search(@Query() query: { search?: string }) {
+    const { search } = query;
+    console.log(search);
+    let jobOffer = null;
+    try {
+      jobOffer = await this.jobOfferService.searchJobOffers(search);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException();
+      }
+      throw new BadRequestException();
+    }
+
+    return jobOffer;
   }
 
   @Get()
