@@ -1,10 +1,37 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule } from '@nestjs/microservices';
+import { ApplicationsModule } from './applications/applications.module';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
+import { Services, authService, recruiterService } from './config/tcpOptions';
+import validationSchema from './config/validation';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'prod',
+      validationSchema: validationSchema,
+    }),
+    ClientsModule.registerAsync({
+      isGlobal: true,
+      clients: [
+        {
+          inject: [ConfigService],
+          name: Services.AUTH_SERVICE,
+          useFactory: (configService: ConfigService) =>
+            authService(configService),
+        },
+        {
+          inject: [ConfigService],
+          name: Services.RECRUITER_SERVICE,
+          useFactory: (configService: ConfigService) =>
+            recruiterService(configService),
+        },
+      ],
+    }),
+    ApplicationsModule,
+    BookmarksModule,
+  ],
 })
 export class AppModule {}

@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api-deployment
+  labels:
+    app: auth-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+      - name: auth-api
+        image: "#{ACR}#/auth-api"
+        ports:
+        - containerPort: 3000
+        - containerPort: 4000
+        env:
+          - name: MICROSERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_HOST
+          
+          - name: MICROSERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_SERVICE_PORT
+          
+          - name: DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: AUTH_DB_URL
+          
+          - name: SECRET_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: SECRET_KEY
+          
+          - name: EXPIRES_IN
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: EXPIRES_IN
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api
+spec:
+  selector:
+    app: auth-api
+  ports:
+    - name: app-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+    - name: ms-port 
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
