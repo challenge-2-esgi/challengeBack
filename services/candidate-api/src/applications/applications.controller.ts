@@ -20,13 +20,20 @@ import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import JwtAuthGuard from 'src/auth/jwt-guard';
+import RoleGuard from 'src/auth/role-guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/roles';
 
-@UseGuards(JwtAuthGuard)
+// TODO: find applications by offer id
+// TODO: all endpoint should be based on the current logged in user
+
+@UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Post()
+  @Roles(Role.CANDIDATE)
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @UploadedFile(ApplicationsParseFileFieldsPipe)

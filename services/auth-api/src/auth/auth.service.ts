@@ -64,4 +64,25 @@ export class AuthService {
     const user = await this.usersService.create(dto);
     return { ...user, access_token: this.jwtService.sign({ sub: user.id }) };
   }
+
+  async getUserFrom(token: string) {
+    const payload = this.jwtService.decode(token);
+    if (typeof payload === 'string') {
+      throw new Error();
+    }
+    const userId = payload['sub'] ?? '';
+    return await this.usersService.findOne(userId);
+  }
+
+  async verifyRoles(roles: string[], token: string) {
+    try {
+      const user = await this.getUserFrom(token);
+      if (!user || !user.roles || !user.roles.some((r) => roles.includes(r))) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }
