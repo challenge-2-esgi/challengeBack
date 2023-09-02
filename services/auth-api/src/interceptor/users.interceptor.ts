@@ -12,6 +12,9 @@ export class UsersInterceptor implements NestInterceptor {
     return next.handle().pipe(
       // Use the `map` operator to transform the user object
       map((user) => {
+        if (user == null) {
+          return null;
+        }
         // If the user object is an array, map over it and remove the password property from each element
         if (Array.isArray(user)) {
           return user.map(
