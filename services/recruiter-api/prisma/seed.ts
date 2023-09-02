@@ -1,31 +1,30 @@
-import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { Address, Company, JobOffer, PrismaClient } from '@prisma/client';
+import { Address, Company, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const elasticsearchService = new ElasticsearchService({
-  node: process.env.ELASTICSEARCH_NODE,
-  auth: {
-    username: process.env.ELASTICSEARCH_USERNAME,
-    password: process.env.ELASTICSEARCH_PASSWORD,
-  },
-});
+// const elasticsearchService = new ElasticsearchService({
+//   node: process.env.ELASTICSEARCH_NODE,
+//   auth: {
+//     username: process.env.ELASTICSEARCH_USERNAME,
+//     password: process.env.ELASTICSEARCH_PASSWORD,
+//   },
+// });
 
-interface JobOfferSearchBody {
-  id: string;
-  title: string;
-  description: string;
-}
+// interface JobOfferSearchBody {
+//   id: string;
+//   title: string;
+//   description: string;
+// }
 
-const indexPost = (jobOffer: JobOffer) => {
-  return elasticsearchService.index<JobOfferSearchBody>({
-    index: 'job-offer',
-    body: {
-      id: jobOffer.id,
-      title: jobOffer.title,
-      description: jobOffer.description,
-    },
-  });
-};
+// const indexPost = (jobOffer: JobOffer) => {
+//   return elasticsearchService.index<JobOfferSearchBody>({
+//     index: 'job-offer',
+//     body: {
+//       id: jobOffer.id,
+//       title: jobOffer.title,
+//       description: jobOffer.description,
+//     },
+//   });
+// };
 
 async function resetDB() {
   await prisma.jobOffer.deleteMany();
@@ -163,9 +162,9 @@ async function insertJobOffers(companies: Company[]) {
     },
   });
 
-  indexPost(createJob1);
-  indexPost(createJob2);
-  indexPost(createJob3);
+  // indexPost(createJob1);
+  // indexPost(createJob2);
+  // indexPost(createJob3);
 
   const jobsArray = [createJob1, createJob2, createJob3];
 
