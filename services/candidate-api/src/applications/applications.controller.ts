@@ -23,9 +23,11 @@ import JwtAuthGuard from 'src/auth/jwt-guard';
 import RoleGuard from 'src/auth/role-guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/auth/roles';
+import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import { User } from 'src/auth/user';
 
 // TODO: find applications by offer id
-// TODO: all endpoint should be based on the current logged in user
+// TODO: remove unused endpoints
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('applications')
@@ -39,11 +41,13 @@ export class ApplicationsController {
     @UploadedFile(ApplicationsParseFileFieldsPipe)
     file: Express.Multer.File | null,
     @Body(ValidationPipe) createApplicationDto: CreateApplicationDto,
+    @LoggedInUser() loggedInUser: User,
   ) {
     let application = null;
     try {
       application = await this.applicationsService.create(
         createApplicationDto,
+        loggedInUser.id,
         file,
       );
     } catch (error) {
@@ -58,14 +62,19 @@ export class ApplicationsController {
     return application;
   }
 
-  @Get()
-  async findAll() {
-    return await this.applicationsService.findAll();
-  }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.applicationsService.findOne(id);
+  }
+
+  @Get()
+  async findByUserId(@LoggedInUser() loggedInUser: User) {
+    return await this.applicationsService.findByUserId(loggedInUser.id);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.applicationsService.findAll();
   }
 
   @Patch(':id')
@@ -79,10 +88,5 @@ export class ApplicationsController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.applicationsService.remove(id);
-  }
-
-  @Get('/user/:id')
-  async findByUserId(@Param('id') id: string) {
-    return await this.applicationsService.findByUserId(id);
   }
 }

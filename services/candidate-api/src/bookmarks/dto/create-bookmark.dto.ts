@@ -1,11 +1,8 @@
-import { IsDefined, IsNotEmpty } from 'class-validator';
+import { IsDefined, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateBookmarkDto {
   @IsDefined()
   @IsNotEmpty()
+  @IsUUID()
   offerId: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  userId: string;
 }

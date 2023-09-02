@@ -28,7 +28,6 @@ export default class JwtAuthGuard implements CanActivate {
 
       // if valid jwt
       // add user to request
-      console.log(res);
       if (res) {
         const user = await firstValueFrom(
           this.authProxy
