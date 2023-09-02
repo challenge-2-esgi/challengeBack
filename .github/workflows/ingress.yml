@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "deploy"
+      # TODO: replace token FRONT_URL
+
       # - uses: actions/checkout@v3
       # - name: Set AKS Context
       #   uses: azure/aks-set-context@v1

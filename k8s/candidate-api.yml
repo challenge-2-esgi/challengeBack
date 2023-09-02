@@ -64,6 +64,17 @@ spec:
               configMapKeyRef:
                 name: challenge-configmap
                 key: AUTH_SERVICE_PORT
+          
+          - name: RECRUITER_SERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: RECRUITER_SERVICE_HOST
+          - name: RECRUITER_SERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: RECRUITER_SERVICE_PORT
 ---
 
 apiVersion: v1
