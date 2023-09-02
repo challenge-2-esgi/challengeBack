@@ -21,6 +21,9 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/auth/roles';
+import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import { User } from 'src/auth/user';
+import RoleGuard from 'src/auth/role-guard';
 
 // TODO: check if owner
 
@@ -28,7 +31,7 @@ import { Role } from 'src/auth/roles';
 export class CompanyController {
   constructor(private readonly companiesService: CompanyService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Post()
   @Roles(Role.RECRUITER)
   @UseInterceptors(
@@ -44,11 +47,12 @@ export class CompanyController {
       images?: Express.Multer.File[] | null;
     },
     @Body() dto: CreateCompanyDto,
+    @LoggedInUser() loggedInUser: User,
   ) {
-    let company = null;
     try {
-      company = await this.companiesService.create(
+      return await this.companiesService.create(
         dto,
+        loggedInUser.id,
         files.logo,
         files.images,
       );
@@ -61,7 +65,6 @@ export class CompanyController {
       }
       throw new BadRequestException();
     }
-    return company;
   }
 
   @Get()
@@ -71,9 +74,8 @@ export class CompanyController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    let company = null;
     try {
-      company = await this.companiesService.findOne(id);
+      return await this.companiesService.findOne(id);
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError &&
@@ -83,14 +85,13 @@ export class CompanyController {
       }
       throw new BadRequestException();
     }
-    return company;
   }
 
-  @Get('owned/:id')
-  async findOneByOwned(@Param('id') id: string) {
-    let company = null;
+  @UseGuards(JwtAuthGuard)
+  @Get('owned/current')
+  async findLoggedInUserCompany(@LoggedInUser() loggedInUser: User) {
     try {
-      company = await this.companiesService.findByOwnerId(id);
+      return await this.companiesService.findByOwnerId(loggedInUser.id);
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError &&
@@ -100,7 +101,6 @@ export class CompanyController {
       }
       throw new BadRequestException();
     }
-    return company;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -120,9 +120,8 @@ export class CompanyController {
     },
     @Body() dto: UpdateCompanyDto,
   ) {
-    let updatedCompany = null;
     try {
-      updatedCompany = await this.companiesService.update(
+      return await this.companiesService.update(
         id,
         dto,
         files.logo,
@@ -137,7 +136,6 @@ export class CompanyController {
       }
       throw new BadRequestException();
     }
-    return updatedCompany;
   }
 
   @UseGuards(JwtAuthGuard)
