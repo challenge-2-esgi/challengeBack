@@ -19,13 +19,18 @@ import { CompanyParseFileFieldsPipe } from './company-parse-file-fields.pipe';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/roles';
+
+// TODO: check if owner
 
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companiesService: CompanyService) {}
-  
+
   @UseGuards(JwtAuthGuard)
   @Post()
+  @Roles(Role.RECRUITER)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'logo', maxCount: 1 },

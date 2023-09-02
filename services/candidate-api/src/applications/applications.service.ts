@@ -19,9 +19,9 @@ export class ApplicationsService {
     file: Express.Multer.File | null,
   ) {
     let fileUrl = '';
-    if (file != null) {
-      fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
-    }
+    // if (file != null) {
+    //   fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
+    // }
 
     return await this.prisma.application.create({
       data: {

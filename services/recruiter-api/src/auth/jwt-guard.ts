@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -26,6 +27,10 @@ export default class JwtAuthGuard implements CanActivate {
       );
     } catch (error) {
       res = false;
+    }
+
+    if (!res) {
+      throw new UnauthorizedException();
     }
 
     return res;

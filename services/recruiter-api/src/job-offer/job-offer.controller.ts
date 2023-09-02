@@ -17,6 +17,10 @@ import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { JobOfferService } from './job-offer.service';
 import JwtAuthGuard from 'src/auth/jwt-guard';
+import { Role } from 'src/auth/roles';
+import { Roles } from 'src/auth/roles.decorator';
+
+// TODO: check if owner
 
 @Controller('job-offers')
 export class JobOfferController {
@@ -24,6 +28,7 @@ export class JobOfferController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @Roles(Role.RECRUITER)
   async create(@Body() dto: CreateJobOfferDto) {
     return await this.jobOfferService.create(dto);
   }
