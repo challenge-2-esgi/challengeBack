@@ -25,6 +25,18 @@ export default class JwtAuthGuard implements CanActivate {
           .send('auth-validateJwt', { token: token })
           .pipe(timeout(5000)),
       );
+
+      // if valid jwt
+      // add user to request
+      console.log(res);
+      if (res) {
+        const user = await firstValueFrom(
+          this.authProxy
+            .send('auth-getLoggedInUser', { token: token })
+            .pipe(timeout(5000)),
+        );
+        user == null ? (res = false) : (req.user = user);
+      }
     } catch (error) {
       res = false;
     }
