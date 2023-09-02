@@ -16,6 +16,7 @@ export class ApplicationsService {
 
   async create(
     createApplicationDto: CreateApplicationDto,
+    userId: string,
     file: Express.Multer.File | null,
   ) {
     let fileUrl = '';
@@ -25,7 +26,7 @@ export class ApplicationsService {
 
     return await this.prisma.application.create({
       data: {
-        userId: createApplicationDto.userId,
+        userId: userId,
         offerId: createApplicationDto.offerId,
         motivation: createApplicationDto.motivation,
         cv: fileUrl,

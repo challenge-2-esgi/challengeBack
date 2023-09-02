@@ -19,6 +19,7 @@ import { JobOfferService } from './job-offer.service';
 import JwtAuthGuard from 'src/auth/jwt-guard';
 import { Role } from 'src/auth/roles';
 import { Roles } from 'src/auth/roles.decorator';
+import RoleGuard from 'src/auth/role-guard';
 
 // TODO: check if owner
 
@@ -26,7 +27,7 @@ import { Roles } from 'src/auth/roles.decorator';
 export class JobOfferController {
   constructor(private readonly jobOfferService: JobOfferService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Post()
   @Roles(Role.RECRUITER)
   async create(@Body() dto: CreateJobOfferDto) {
