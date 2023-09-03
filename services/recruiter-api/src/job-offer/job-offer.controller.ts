@@ -20,12 +20,18 @@ import JwtAuthGuard from 'src/auth/jwt-guard';
 import { Role } from 'src/auth/roles';
 import { Roles } from 'src/auth/roles.decorator';
 import RoleGuard from 'src/auth/role-guard';
+import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import { User } from 'src/auth/user';
+import { CompanyService } from 'src/company/company.service';
 
 // TODO: check if owner
 
 @Controller('job-offers')
 export class JobOfferController {
-  constructor(private readonly jobOfferService: JobOfferService) {}
+  constructor(
+    private readonly jobOfferService: JobOfferService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Post()
@@ -67,9 +73,16 @@ export class JobOfferController {
     return await this.jobOfferService.findAll(params);
   }
 
-  @Get('/company/:companyId')
-  async findAllByCompany(@Param('companyId') companyId: string) {
-    return await this.jobOfferService.findAllByCompany(companyId);
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Get('company/current')
+  @Roles(Role.RECRUITER)
+  async findLoggedInUserJobOffers(@LoggedInUser() loggedInUser: User) {
+    const company = await this.companyService.findByOwnerId(loggedInUser.id);
+    if (company == null) {
+      return [];
+    }
+
+    return await this.jobOfferService.findAllByCompany(company.id);
   }
 
   @Get(':id')
