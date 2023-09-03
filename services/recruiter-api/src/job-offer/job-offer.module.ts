@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CompanyModule } from 'src/company/company.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JobOfferController } from './job-offer.controller';
 import { JobOfferService } from './job-offer.service';
@@ -18,6 +19,7 @@ import { JobOfferService } from './job-offer.service';
     //   }),
     //   inject: [ConfigService],
     // }),
+    CompanyModule,
   ],
   // exports: [ElasticsearchModule],
   controllers: [JobOfferController],
