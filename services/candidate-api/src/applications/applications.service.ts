@@ -1,11 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateApplicationDto } from './dto/create-application.dto';
-import { UpdateApplicationDto } from './dto/update-application.dto';
 import { PrismaClient } from '@prisma/client';
-import {
-  AccessType,
-  AzureBlobService,
-} from 'src/azure-blob/azure-blob.service';
+import { AzureBlobService } from 'src/azure-blob/azure-blob.service';
+import { CreateApplicationDto } from './dto/create-application.dto';
 
 @Injectable()
 export class ApplicationsService {
@@ -34,10 +30,6 @@ export class ApplicationsService {
     });
   }
 
-  async findAll() {
-    return await this.prisma.application.findMany();
-  }
-
   async findOne(id: string) {
     const application = await this.prisma.application.findUnique({
       where: {
@@ -60,26 +52,5 @@ export class ApplicationsService {
       throw new NotFoundException('Applications not found given user');
     }
     return applications;
-  }
-
-  async update(id: string, UpdateApplicationDto: UpdateApplicationDto) {
-    const application = await this.findOne(id);
-    return await this.prisma.application.update({
-      where: {
-        id,
-      },
-      data: {
-        status: UpdateApplicationDto.status,
-      },
-    });
-  }
-
-  async remove(id: string) {
-    const application = await this.findOne(id);
-    return await this.prisma.application.delete({
-      where: {
-        id,
-      },
-    });
   }
 }
