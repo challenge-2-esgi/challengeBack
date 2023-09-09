@@ -7,9 +7,8 @@ import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 @Injectable()
 export class JobOfferService {
   constructor(
-    private readonly prisma: PrismaService,
-  ) // private readonly jobOfferSearchService: JobOfferSearchService,
-  {}
+    private readonly prisma: PrismaService, // private readonly jobOfferSearchService: JobOfferSearchService,
+  ) {}
 
   async create(dto: CreateJobOfferDto) {
     const jobOffer = await this.prisma.jobOffer.create({
@@ -102,6 +101,19 @@ export class JobOfferService {
             address: true,
           },
         },
+      },
+    });
+  }
+
+  async findManyByIds(ids: string[]) {
+    return await this.prisma.jobOffer.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        company: true,
       },
     });
   }

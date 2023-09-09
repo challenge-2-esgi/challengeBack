@@ -25,8 +25,6 @@ import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
 import { User } from 'src/auth/user';
 import RoleGuard from 'src/auth/role-guard';
 
-// TODO: check if owner
-
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companiesService: CompanyService) {}
@@ -111,6 +109,7 @@ export class CompanyController {
       { name: 'images', maxCount: 3 },
     ]),
   )
+  // TODO: check if owner
   async update(
     @Param('id') id: string,
     @UploadedFiles(CompanyParseFileFieldsPipe)
@@ -140,6 +139,7 @@ export class CompanyController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  // TODO: check if owner
   async remove(@Param('id') id: string) {
     try {
       await this.companiesService.remove(id);

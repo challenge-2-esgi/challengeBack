@@ -11,16 +11,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersService } from './users.service';
-import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 import { AuthGuard } from '@nestjs/passport';
 import { Role, User } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { LoggedInUser } from 'src/auth/decorator/user.decorator';
+import { UsersInterceptor } from 'src/interceptor/users.interceptor';
 import RoleGuard from 'src/roles/RoleGuard';
 import { Roles } from 'src/roles/roles.decorator';
-import { LoggedInUser } from 'src/auth/decorator/user.decorator';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -88,6 +88,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.delete(id);
   }

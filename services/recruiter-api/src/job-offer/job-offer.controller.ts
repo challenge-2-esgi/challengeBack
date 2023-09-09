@@ -13,18 +13,16 @@ import {
 } from '@nestjs/common';
 import { ContractType, Experience } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import JwtAuthGuard from 'src/auth/jwt-guard';
+import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import RoleGuard from 'src/auth/role-guard';
+import { Role } from 'src/auth/roles';
+import { Roles } from 'src/auth/roles.decorator';
+import { User } from 'src/auth/user';
+import { CompanyService } from 'src/company/company.service';
 import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
 import { JobOfferService } from './job-offer.service';
-import JwtAuthGuard from 'src/auth/jwt-guard';
-import { Role } from 'src/auth/roles';
-import { Roles } from 'src/auth/roles.decorator';
-import RoleGuard from 'src/auth/role-guard';
-import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
-import { User } from 'src/auth/user';
-import { CompanyService } from 'src/company/company.service';
-
-// TODO: check if owner
 
 @Controller('job-offers')
 export class JobOfferController {
@@ -77,6 +75,7 @@ export class JobOfferController {
   @Get('company/current')
   @Roles(Role.RECRUITER)
   async findLoggedInUserJobOffers(@LoggedInUser() loggedInUser: User) {
+    // TODO: handle exception
     const company = await this.companyService.findByOwnerId(loggedInUser.id);
     if (company == null) {
       return [];
@@ -105,6 +104,7 @@ export class JobOfferController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  // TODO: check if owner
   async update(@Param('id') id: string, @Body() dto: UpdateJobOfferDto) {
     let jobOffer = null;
     try {
@@ -124,6 +124,7 @@ export class JobOfferController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  // TODO: check if owner
   async remove(@Param('id') id: string) {
     try {
       await this.jobOfferService.remove(id);
