@@ -1,17 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class BookmarksService {
   constructor(private prisma: PrismaClient) {}
 
-  async create(createBookmarkDto: CreateBookmarkDto) {
+  async create(userId: string, offerId: string) {
     return await this.prisma.bookmark.create({
       data: {
-        userId: createBookmarkDto.userId,
-        offerId: createBookmarkDto.offerId,
+        userId,
+        offerId,
       },
     });
   }
@@ -42,19 +40,6 @@ export class BookmarksService {
       throw new NotFoundException('Bookmarks not found given user');
     }
     return bookmarks;
-  }
-
-  async update(id: string, updateBookmarkDto: UpdateBookmarkDto) {
-    const bookmark = await this.findOne(id);
-    return await this.prisma.bookmark.update({
-      where: {
-        id,
-      },
-      data: {
-        offerId: updateBookmarkDto.offerId,
-        userId: updateBookmarkDto.userId,
-      },
-    });
   }
 
   async remove(id: string) {

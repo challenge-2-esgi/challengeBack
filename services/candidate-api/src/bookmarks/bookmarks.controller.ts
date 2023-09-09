@@ -3,6 +3,7 @@ import {
   ConflictException,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
@@ -14,17 +15,28 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { BookmarksService } from './bookmarks.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import JwtAuthGuard from 'src/auth/jwt-guard';
+import RoleGuard from 'src/auth/role-guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/roles';
+import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import { User } from 'src/auth/user';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('bookmarks')
 export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
   @Post()
-  async create(@Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto) {
-    let bookmark = null;
+  @Roles(Role.CANDIDATE)
+  async create(
+    @Body(ValidationPipe) createBookmarkDto: CreateBookmarkDto,
+    @LoggedInUser() loggedInUser: User,
+  ) {
     try {
-      bookmark = await this.bookmarksService.create(createBookmarkDto);
+      return await this.bookmarksService.create(
+        loggedInUser.id,
+        createBookmarkDto.offerId,
+      );
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError &&
@@ -34,16 +46,16 @@ export class BookmarksController {
       }
       throw new UnprocessableEntityException();
     }
-
-    return bookmark;
   }
 
-  @Get('/user/:id')
-  async findByUserId(@Param('id') id: string) {
-    return await this.bookmarksService.findByUserId(id);
+  @Get()
+  @Roles(Role.CANDIDATE)
+  async findByUserId(@LoggedInUser() loggedInUser: User) {
+    return await this.bookmarksService.findByUserId(loggedInUser.id);
   }
 
   @Delete(':id')
+  @Roles(Role.CANDIDATE)
   async remove(@Param('id') id: string) {
     return await this.bookmarksService.remove(id);
   }

@@ -41,6 +41,16 @@ export class UsersService {
     });
   }
 
+  async findManyByIds(ids: string[]) {
+    return await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
+
   async create(data: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 

@@ -18,10 +18,26 @@ import { LoginDto } from './loginDto/loginDto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // MS listeners
+  // Microservice listeners
   @MessagePattern('auth-validateJwt')
   async validateJwt(@Payload() { token }: { token: string }) {
     return await this.authService.validateToken(token);
+  }
+
+  @MessagePattern('auth-getLoggedInUser')
+  async getLoggedInUser(@Payload() { token }: { token: string }) {
+    try {
+      return await this.authService.getUserFrom(token);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  @MessagePattern('auth-verifyRoles')
+  async verifyRoles(
+    @Payload() { token, roles }: { token: string; roles: string[] },
+  ) {
+    return { hasRoles: await this.authService.verifyRoles(roles, token) };
   }
 
   @Post('register')

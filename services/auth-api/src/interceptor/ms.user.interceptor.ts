@@ -7,7 +7,7 @@ import {
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class UsersInterceptor implements NestInterceptor {
+export class MsUsersInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
       // Use the `map` operator to transform the user object
@@ -15,16 +15,16 @@ export class UsersInterceptor implements NestInterceptor {
         if (user == null) {
           return null;
         }
-        // If the user object is an array, map over it and remove the password property from each element
+        // If the user object is an array, map over it and remove the properties
         if (Array.isArray(user)) {
           return user.map(
-            ({ password, ...userWithoutPassword }) => userWithoutPassword,
+            ({ password, roles, createdAt, updatedAt, ...msUser }) => msUser,
           );
         }
 
-        // Otherwise, assume the user object is a single object and remove the password property
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
+        // Otherwise, assume the user object is a single object and remove the properties
+        const { password, roles, createdAt, updatedAt, ...msUser } = user;
+        return msUser;
       }),
     );
   }

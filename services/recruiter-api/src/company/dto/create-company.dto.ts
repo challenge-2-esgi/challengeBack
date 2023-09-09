@@ -25,10 +25,6 @@ export class CreateCompanyDto {
   @IsNotEmpty()
   motivation: string;
 
-  @IsNotEmpty()
-  @IsUUID()
-  ownerId: string;
-
   // address
   @IsNotEmpty()
   streetNumber: string;
