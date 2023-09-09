@@ -1,10 +1,14 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
   Get,
+  NotFoundException,
   Param,
+  Patch,
   Post,
+  SetMetadata,
   UnprocessableEntityException,
   UploadedFile,
   UseGuards,
@@ -22,8 +26,9 @@ import { User } from 'src/auth/user';
 import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
-
-// TODO: find applications by offer id
+import { UpdateApplicationDto } from './dto/update-application.dto';
+import OfferOwnerGuard from 'src/auth/offer-owner-guard';
+import { OwnerResource } from 'src/auth/owner-resource';
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('applications')
@@ -59,7 +64,38 @@ export class ApplicationsController {
   }
 
   @Get()
-  async findByUserId(@LoggedInUser() loggedInUser: User) {
+  @Roles(Role.CANDIDATE)
+  async findAllByUserId(@LoggedInUser() loggedInUser: User) {
     return await this.applicationsService.findByUserId(loggedInUser.id);
+  }
+
+  @Get('offer/:id')
+  @Roles(Role.RECRUITER)
+  @UseGuards(OfferOwnerGuard)
+  @SetMetadata('id', OwnerResource.OFFER)
+  async findAllByOfferId(@Param('id') id: string) {
+    return await this.applicationsService.findByOfferId(id);
+  }
+
+  @Patch(':id')
+  @Roles(Role.RECRUITER)
+  @UseGuards(OfferOwnerGuard)
+  @SetMetadata('id', OwnerResource.APPLICATION)
+  async update(
+    @Param('id') id: string,
+    @Body(ValidationPipe) dto: UpdateApplicationDto,
+  ) {
+    try {
+      return await this.applicationsService.update(id, dto);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException();
+      }
+
+      throw new BadRequestException();
+    }
   }
 }
