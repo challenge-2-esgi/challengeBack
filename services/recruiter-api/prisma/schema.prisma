@@ -11,20 +11,22 @@ datasource db {
 }
 
 model Company {
-  id          String     @id @default(uuid())
-  name        String
-  siren       String     @unique
-  website     String
-  logo        String?
-  size        Int
-  sector      String
-  description String
-  motivation  String
-  images      Json[]
-  address     Address    @relation(fields: [addressId], references: [id])
-  addressId   String
-  ownerId     String
-  jobOffers   JobOffer[]
+  id                  String     @id @default(uuid())
+  name                String
+  siren               String     @unique
+  website             String
+  logo                String?
+  size                Int
+  sector              String
+  description         String
+  motivation          String
+  images              Json[]
+  address             Address    @relation(fields: [addressId], references: [id])
+  addressId           String
+  ownerId             String
+  jobOffers           JobOffer[]
+  subscribed          Boolean?
+  subscriptionEndDate DateTime?
 }
 
 model Address {
