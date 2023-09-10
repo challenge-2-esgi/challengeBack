@@ -98,6 +98,7 @@ jobs:
       - name: Deploy Manifests
         uses: Azure/k8s-deploy@v4
         with:
+          namespace: ${{ secrets.K8S_NAMESPACE }}
           manifests: |
             k8s/recruiter-api.yml
           images: |
