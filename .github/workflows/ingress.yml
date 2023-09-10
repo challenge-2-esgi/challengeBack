@@ -14,7 +14,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # TODO: replace token FRONT_URL
       - uses: actions/checkout@v3
       - name: Set AKS Context
         uses: azure/aks-set-context@v1
@@ -29,6 +28,7 @@ jobs:
         env:
           SECRET_NAME: ${{ secrets.K8S_INGRESS_SECRET_NAME }}
           HOST: ${{ secrets.K8S_INGRESS_HOST }}
+          FRONT_URL: ${{ secrets.FRONT_URL }}
       - name: Deploy Manifests
         uses: Azure/k8s-deploy@v4
         with:
