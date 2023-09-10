@@ -7,6 +7,7 @@ import { Services, authService, candidateService } from './config/tcpOptions';
 import validationSchema from './config/validation';
 import { JobOfferModule } from './job-offer/job-offer.module';
 import { PrismaService } from './prisma/prisma.service';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PrismaService } from './prisma/prisma.service';
     }),
     CompanyModule,
     JobOfferModule,
+    PaymentsModule,
   ],
   providers: [PrismaService, AzureBlobService],
 })

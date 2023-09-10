@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import tcpOptions from './config/tcpOptions';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   const configService = app.get(ConfigService);
   app.enableCors();
   app.useGlobalPipes(
