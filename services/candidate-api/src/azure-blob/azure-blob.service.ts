@@ -29,7 +29,7 @@ export class AzureBlobService {
     return this.configService.get('AZURE_BLOB_PUBLIC_CONTAINER');
   }
 
-  private getFileNameFromUrl(fileUrl: string) {
+  public getFileNameFromUrl(fileUrl: string) {
     return fileUrl.substring(fileUrl.lastIndexOf('/') + 1, fileUrl.length);
   }
 
@@ -54,5 +54,15 @@ export class AzureBlobService {
       );
       await client.deleteIfExists();
     } catch (error) {}
+  }
+
+  async downloadFile(fileId: string, access: AccessType = AccessType.PRIVATE) {
+    try {
+      const container = this.getContainer(access);
+      const client = this.getClient(fileId, container);
+      return await client.downloadToBuffer();
+    } catch (error) {
+      throw new Error();
+    }
   }
 }

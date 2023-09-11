@@ -30,17 +30,17 @@ export class CompanyService {
     images: Express.Multer.File[] | null,
   ) {
     let logoUrl = null;
-    // if (logo != null) {
-    //   logoUrl = await this.azureBlobService.uploadFile(logo, AccessType.PUBLIC);
-    // }
+    if (logo != null) {
+      logoUrl = await this.azureBlobService.uploadFile(logo, AccessType.PUBLIC);
+    }
 
     let imageUrls = [];
-    // if (images != null) {
-    //   imageUrls = await this.azureBlobService.uploadFiles(
-    //     images,
-    //     AccessType.PUBLIC,
-    //   );
-    // }
+    if (images != null) {
+      imageUrls = await this.azureBlobService.uploadFiles(
+        images,
+        AccessType.PUBLIC,
+      );
+    }
 
     const address = {
       streetNumber: dto.streetNumber,
@@ -129,34 +129,34 @@ export class CompanyService {
 
     // update logo
     let logoUrl = company.logo;
-    // if (dto.removeLogo) {
-    //   company.logo !== null &&
-    //     (await this.azureBlobService.deleteFile(
-    //       company.logo,
-    //       AccessType.PUBLIC,
-    //     ));
-    // }
+    if (dto.removeLogo) {
+      company.logo !== null &&
+        (await this.azureBlobService.deleteFile(
+          company.logo,
+          AccessType.PUBLIC,
+        ));
+    }
 
-    // if (logo !== null) {
-    //   logoUrl = await this.azureBlobService.uploadFile(logo, AccessType.PUBLIC);
-    // }
+    if (logo !== null) {
+      logoUrl = await this.azureBlobService.uploadFile(logo, AccessType.PUBLIC);
+    }
 
     // update images
     let imageUrls = company.images;
-    // if (dto.removeImages) {
-    //   company.images.length > 0 &&
-    //     (await this.azureBlobService.deleteFiles(
-    //       company.images.map((image) => image.toString()),
-    //       AccessType.PUBLIC,
-    //     ));
-    // }
+    if (dto.removeImages) {
+      company.images.length > 0 &&
+        (await this.azureBlobService.deleteFiles(
+          company.images.map((image) => image.toString()),
+          AccessType.PUBLIC,
+        ));
+    }
 
-    // if (images !== null) {
-    //   imageUrls = await this.azureBlobService.uploadFiles(
-    //     images,
-    //     AccessType.PUBLIC,
-    //   );
-    // }
+    if (images !== null) {
+      imageUrls = await this.azureBlobService.uploadFiles(
+        images,
+        AccessType.PUBLIC,
+      );
+    }
 
     const updatedCompany = await this.prisma.company.update({
       where: {

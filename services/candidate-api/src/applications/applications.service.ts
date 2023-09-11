@@ -1,7 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaClient } from '@prisma/client';
-import { AzureBlobService } from 'src/azure-blob/azure-blob.service';
+import {
+  AccessType,
+  AzureBlobService,
+} from 'src/azure-blob/azure-blob.service';
 import { Services } from 'src/config/tcpOptions';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -23,16 +26,19 @@ export class ApplicationsService {
     file: Express.Multer.File | null,
   ) {
     let fileUrl = '';
-    // if (file != null) {
-    //   fileUrl = await this.azureBlobService.uploadFile(file, AccessType.PUBLIC);
-    // }
+    if (file != null) {
+      fileUrl = await this.azureBlobService.uploadFile(
+        file,
+        AccessType.PRIVATE,
+      );
+    }
 
     return await this.prisma.application.create({
       data: {
         userId: userId,
         offerId: createApplicationDto.offerId,
         motivation: createApplicationDto.motivation,
-        cv: fileUrl,
+        cv: this.azureBlobService.getFileNameFromUrl(fileUrl),
       },
     });
   }
@@ -115,6 +121,18 @@ export class ApplicationsService {
     }
 
     return applications;
+  }
+
+  async findByResumeId(id: string) {
+    return await this.prisma.application.findFirst({
+      where: {
+        cv: id,
+      },
+    });
+  }
+
+  async findResume(id: string) {
+    return await this.azureBlobService.downloadFile(id);
   }
 
   async update(id: string, dto: UpdateApplicationDto) {
