@@ -19,6 +19,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import JwtAuthGuard from 'src/auth/jwt-guard';
 import { LoggedInUser } from 'src/auth/logged-in-user.decorator';
+import OfferOwnerGuard from 'src/auth/offer-owner-guard';
+import { OwnerResource } from 'src/auth/owner-resource';
 import RoleGuard from 'src/auth/role-guard';
 import { Role } from 'src/auth/roles';
 import { Roles } from 'src/auth/roles.decorator';
@@ -27,8 +29,6 @@ import { ApplicationsParseFileFieldsPipe } from './applications-parse-file.pipe'
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import OfferOwnerGuard from 'src/auth/offer-owner-guard';
-import { OwnerResource } from 'src/auth/owner-resource';
 
 @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('applications')
