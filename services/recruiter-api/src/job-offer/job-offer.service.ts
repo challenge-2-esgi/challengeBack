@@ -3,11 +3,13 @@ import { ContractType, Experience } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJobOfferDto } from './dto/create-job-offer.dto';
 import { UpdateJobOfferDto } from './dto/update-job-offer.dto';
+import { JobOfferSearchService } from './job-offer-search.service';
 
 @Injectable()
 export class JobOfferService {
   constructor(
-    private readonly prisma: PrismaService, // private readonly jobOfferSearchService: JobOfferSearchService,
+    private readonly prisma: PrismaService,
+    private readonly jobOfferSearchService: JobOfferSearchService,
   ) {}
 
   async create(dto: CreateJobOfferDto) {
@@ -18,7 +20,7 @@ export class JobOfferService {
       },
     });
 
-    // const jobOfferSearch = await this.jobOfferSearchService.indexPost(jobOffer);
+    const jobOfferSearch = await this.jobOfferSearchService.indexPost(jobOffer);
 
     return jobOffer;
   }
@@ -32,31 +34,31 @@ export class JobOfferService {
   }) {
     const { skip, take, contractType, experience, search } = params;
 
-    // if (search) {
-    //   const results = await this.jobOfferSearchService.search(search);
-    //   const ids = results.map((result: any) => result.id);
-    //   if (!ids.length) {
-    //     return [];
-    //   }
-    //   return this.prisma.jobOffer.findMany({
-    //     where: {
-    //       id: {
-    //         in: ids,
-    //       },
-    //       ...(contractType != null && { contractType: contractType }),
-    //       ...(experience != null && { experience: experience }),
-    //     },
-    //     skip: skip ? parseInt(skip.toString()) : undefined,
-    //     take: take ? parseInt(take.toString()) : undefined,
-    //     include: {
-    //       company: {
-    //         include: {
-    //           address: true,
-    //         },
-    //       },
-    //     },
-    //   });
-    // }
+    if (search) {
+      const results = await this.jobOfferSearchService.search(search);
+      const ids = results.map((result: any) => result.id);
+      if (!ids.length) {
+        return [];
+      }
+      return this.prisma.jobOffer.findMany({
+        where: {
+          id: {
+            in: ids,
+          },
+          ...(contractType != null && { contractType: contractType }),
+          ...(experience != null && { experience: experience }),
+        },
+        skip: skip ? parseInt(skip.toString()) : undefined,
+        take: take ? parseInt(take.toString()) : undefined,
+        include: {
+          company: {
+            include: {
+              address: true,
+            },
+          },
+        },
+      });
+    }
 
     return this.prisma.jobOffer.findMany({
       skip: skip ? parseInt(skip.toString()) : undefined,

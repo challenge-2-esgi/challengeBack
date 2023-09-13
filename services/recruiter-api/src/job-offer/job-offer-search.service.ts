@@ -17,6 +17,7 @@ interface JobOfferSearchResult {
     }>;
   };
 }
+
 @Injectable()
 export class JobOfferSearchService {
   index = 'job-offer';

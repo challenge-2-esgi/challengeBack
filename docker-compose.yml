@@ -47,17 +47,28 @@ services:
     volumes:
       - ./services/recruiter-api:/home/node/app
 
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-  #   container_name: elasticsearch
-  #   environment:
-  #     - node.name=elasticsearch
-  #     - discovery.type=single-node
-  #   ports:
-  #     - 9200:9200
-  #     - 9300:9300
-  #   volumes:
-  #     - esdata:/usr/share/elasticsearch/data
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
 
   db:
     image: postgres:14.8-alpine3.17
@@ -79,7 +90,7 @@ services:
 
 volumes:
   data_db:
-  # esdata:
+  esdata:
 
 networks:
   challenge2:
