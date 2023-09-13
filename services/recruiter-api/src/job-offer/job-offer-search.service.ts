@@ -46,13 +46,13 @@ export class JobOfferSearchService {
           bool: {
             should: [
               {
-                wildcard: {
-                  title: `*${text}*`,
+                regexp: {
+                  title: `.*${text.toLowerCase()}.*`,
                 },
               },
               {
-                wildcard: {
-                  description: `*${text}*`,
+                regexp: {
+                  description: `.*${text.toLowerCase()}.*`,
                 },
               },
             ],
