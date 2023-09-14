@@ -1,0 +1,28 @@
+name: CI/CD elk
+
+on:
+  push:
+    branches:
+      - "main"
+      - "dev"
+    paths:
+      - ".github/workflows/elk.yml"
+      - "k8s/elk.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.AKS_CLUSTER }}
+      - name: Deploy Manifests
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: ${{ secrets.K8S_NAMESPACE }}
+          manifests: |
+            k8s/elk.yml

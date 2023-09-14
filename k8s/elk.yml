@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: es01
+  name: es01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: es01
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: es01
+    spec:
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - chown -R 1000:1000 /usr/share/elasticsearch/data
+        - sysctl -w vm.max_map_count=262144
+        - chmod 777 /usr/share/elasticsearch/data
+        - chomod 777 /usr/share/elasticsearch/data/node
+        - chmod g+rwx /usr/share/elasticsearch/data
+        - chgrp 1000 /usr/share/elasticsearch/data
+        image: busybox:1.29.2
+        imagePullPolicy: IfNotPresent
+        name: set-dir-owner
+        resources: {}
+        securityContext:
+          privileged: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: elastic-data
+      containers:
+        - env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: challenge-configmap
+                  key: ELASTICSEARCH_PASSWORD
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: discovery.type
+              value: single-node
+            - name: node.name
+              valueFrom:
+                configMapKeyRef:
+                  name: challenge-configmap
+                  key: ELASTICSEARCH_NODE
+            - name: xpack.security.enabled
+              value: "true"
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+          name: es01
+          ports:
+            - containerPort: 9200
+          resources:
+            limits:
+              cpu: 250m
+              memory: 1Gi
+            requests:
+              cpu: 150m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data
+              name: elastic-data
+      restartPolicy: Always
+      volumes:
+        - name: elastic-data
+          persistentVolumeClaim:
+            claimName: elastic-data
+status: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: es01
+  name: es01
+spec:
+  ports:
+    - name: "9200"
+      port: 9200
+      targetPort: 9200
+  selector:
+    service: es01
+status:
+  loadBalancer: {}
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    service: elastic-data
+  name: elastic-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+status: {}
