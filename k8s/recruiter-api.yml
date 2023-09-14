@@ -90,6 +90,16 @@ spec:
               configMapKeyRef:
                 name: challenge-configmap
                 key: ELASTICSEARCH_PASSWORD
+          - name: STRIPE_API_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: STRIPE_API_KEY
+          - name: ENDPOINT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: challenge-configmap
+                key: ENDPOINT_SECRET
 ---
 
 apiVersion: v1
