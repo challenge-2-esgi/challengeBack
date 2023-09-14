@@ -18,6 +18,8 @@ const validationSchema = Joi.object({
   ELASTICSEARCH_NODE: Joi.string().required(),
   ELASTICSEARCH_USERNAME: Joi.string().required(),
   ELASTICSEARCH_PASSWORD: Joi.string().required(),
+  STRIPE_API_KEY: Joi.string().required(),
+  ENDPOINT_SECRET: Joi.string().required(),
 });
 
 export default validationSchema;
