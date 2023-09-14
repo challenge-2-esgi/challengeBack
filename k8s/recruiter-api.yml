@@ -79,7 +79,7 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: challenge-configmap
-                key: ELASTICSEARCH_NODE
+                key: ELASTICSEARCH_NODE_URL
           - name: ELASTICSEARCH_USERNAME
             valueFrom:
               configMapKeyRef:
