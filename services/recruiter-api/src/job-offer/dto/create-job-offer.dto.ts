@@ -46,9 +46,8 @@ export class CreateJobOfferDto {
   remuneration: number;
 
   @IsInt()
-  @Min(1)
+  @Min(0)
   @Max(5)
-  @IsOptional()
   remoteDays: number;
 
   @IsDateString()
