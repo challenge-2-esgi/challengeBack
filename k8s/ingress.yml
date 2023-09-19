@@ -67,6 +67,13 @@ spec:
             name: candidate-api
             port:
               number: 3000
+      - path: /resumes/*
+        pathType: Prefix
+        backend:
+          service:
+            name: candidate-api
+            port:
+              number: 3000
       
       - path: /companies
         pathType: Prefix
@@ -90,6 +97,13 @@ spec:
             port:
               number: 3000
       - path: /job-offers/*
+        pathType: Prefix
+        backend:
+          service:
+            name: recruiter-api
+            port:
+              number: 3000
+      - path: /payments/*
         pathType: Prefix
         backend:
           service:
