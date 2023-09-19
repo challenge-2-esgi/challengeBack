@@ -19,7 +19,7 @@ export class PaymentsService {
   }
 
   async createCheckout(createCheckoutDto: CreateCheckoutDto) {
-    const URL_FRONT = this.configService.get('URL_FRONT');
+    const URL_FRONT = "https://www.main-bvxea6i-tazckxp2c3272.fr-4.platformsh.site" // this.configService.get('URL_FRONT');
 
     try {
       const prices = await this.stripe.prices.list();
